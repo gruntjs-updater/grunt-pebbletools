@@ -78,7 +78,22 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
   depObj.buildDeployment(new pebble.shared.BuildDeployment(less), workspaceDs, appName, deployment, accessPointParam, function(accessPointDeployment) {
 
     fs.writeFileSync(p.join(topDir, data.output, accessPointParam + '.json'), accessPointDeployment.toString(), 'utf8');
-
+    if (data.outputTemplates) {
+      var files = grunt.file.expand(data.outputTemplates);
+      files.forEach(function(filePath) {
+        var elements = filePath.split('/');
+        var file = elements.pop();
+        if (file.indexOf('_') === 0) {
+          var filePath = p.join(topDir, elements.join('/'), file);
+          var fileContents = fs.readFileSync(filePath, 'utf8');
+          var deploymentContents = fileContents.replace('{{' + accessPointParam + '}}', accessPointDeployment.toString());
+          var outputPath = p.join(topDir, elements.join('/'), file.replace('_', ''));
+          fs.writeFileSync(outputPath, deploymentContents, 'utf8');
+        } else {
+          grunt.log.warn('output template files should start with "_"'); 
+        }
+      });
+    }
   });
 }
 

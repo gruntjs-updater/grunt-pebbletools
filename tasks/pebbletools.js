@@ -9,6 +9,7 @@
 var compress = require('./lib/compress');
 var extract = require('./lib/extract');
 var deploy = require('./lib/deploy');
+var setup = require('./lib/setup');
 'use strict';
 
 module.exports = function(grunt) {
@@ -69,6 +70,13 @@ module.exports = function(grunt) {
 					grunt.log.writeln('STARTING DEPLOY ...');
 					grunt.log.writeln('');
 					deploy(grunt, this.data, param1);
+					grunt.log.writeln('');
+					grunt.log.writeln('DONE.');
+					break;
+				case 'setup':
+					grunt.log.writeln('STARTING DEPLOY ...');
+					grunt.log.writeln('');
+					setup(grunt, this.data, param1);
 					grunt.log.writeln('');
 					grunt.log.writeln('DONE.');
 					break;

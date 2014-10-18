@@ -1,4 +1,4 @@
-# grunt-pebble
+# grunt-pebbletools
 
 > compress and extract your apps
 
@@ -17,19 +17,25 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-pebble');
 ```
 
-## The "pebble" task
+## The "pebbletools" task
 
 ### Overview
-In your project's Gruntfile, add a section named `pebble` to the data object passed into `grunt.initConfig()`.
+In your project's Gruntfile, add a section named `pebbletools` to the data object passed into `grunt.initConfig()`.
 
 ```js
 grunt.initConfig({
-  pebble: {
+  pebbletools: {
     options: {
       // Task-specific options go here.
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
+    deploy: {
+      outputTemplates: ['path/to/template/_file'], //the file must start with '_', deploy will create the output file without the '_'
+    },
+    compress: {
+      outputTemplates: ['path/to/template/_file'], //the file must start with '_', deploy will create the output file without the '_'
+    },
+    extract: {
+      outputTemplates: ['path/to/template/_file'], //the file must start with '_', deploy will create the output file without the '_'
     },
   },
 });
@@ -56,7 +62,7 @@ In this example, the default options are used to do something with whatever. So 
 
 ```js
 grunt.initConfig({
-  pebble: {
+  pebbletools: {
     options: {},
     files: {
       'dest/default_options': ['src/testing', 'src/123'],
