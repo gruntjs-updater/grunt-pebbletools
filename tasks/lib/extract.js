@@ -1,0 +1,292 @@
+/*
+ * grunt-pebble
+ * 
+ *
+ * Copyright (c) 2014 rtsunoda
+ * Licensed under the MIT license.
+ */
+
+var fs = require('fs');
+var p = require('path');
+var pd = require("pretty-data").pd;
+var pebble = require('pebble-shared-node').pebble;
+var PebbleDataSourceImpl_Json = require('pebble-object-json').PebbleDataSourceImpl_Json;
+var PebbleDataSourceImpl = require("pebble-object-xmldom").PebbleDataSourceImpl;
+var basePath = process.cwd();
+
+
+'use strict';
+
+function json2xml(pebJson) {
+  var xml = PebbleDataSourceImpl_Json.getXml(pebJson, PebbleDataSourceImpl);
+  var out = pd.xml(xml.toString());
+  return out;
+}
+
+function processOtherFiles(otherFiles, data) {
+  //otherFiles
+  console.log('\n----- otherFiles -----');
+  var otherFiles = otherFiles.getRecords('.');
+  for (var i = 0; i < otherFiles.length; i++) {
+    writeFile(otherFiles[i], 'contents', '.');
+  }
+}
+function processServices(services, data) {
+  //services
+  console.log('\n----- services -----');
+  var services = services.getRecords('.');
+  for (var i = 0; i < services.length; i++) {
+    var service = services[i];
+    writeFile(service, '.', 'server/services', 'xml', true);
+  }
+}
+function processTypes(types, data) {
+  //types
+  console.log('\n----- types -----');
+  var types = types.getRecords('.');
+  for (var i = 0; i < types.length; i++) {
+    var type = types[i];
+    writeFile(type, '.', 'frontend/types', 'xml', true);
+  }
+}
+
+function processPebbleControls(tables, controls, data) {
+  //pebbleControls
+  console.log('\n----- pebble controls -----');
+  var controls = controls.getRecords('.');
+  for (var i = 0; i < controls.length; i++) {
+    var control = controls[i];
+    var controlName = control.getTagName();
+    var devCode = control.get('code');
+    if (devCode) {
+      writeFile(control, 'code', 'frontend/src/controls', 'js');
+      control.remove('code');
+    }
+    var testCode = control.get('testCode');
+    if (testCode) {
+      writeFile(control, 'testCode', 'frontend/test/controls', 'js');
+      control.remove('testCode');
+    }
+  
+    //var innerMarkup = control.get('innerMarkup');
+    //if (innerMarkup) {
+      //grunt.file.write('frontend/controls/' + control.getTagName() + '/innerMarkup.xml', json2xml(control.get('innerMarkup').impl.xml), {encoding: 'utf8'});
+      //control.remove('innerMarkup');
+    //} 
+
+    tables.forEach(function(table) {
+
+      var tableName = table.getTagName(); 
+      if (tableName == 'theModel_controls_' + controlName + '_functions') {
+        console.log('\n----- control functions -----');
+        var funcs = table.getRecords('.');
+        for (var i = 0; i < funcs.length; i++) {
+          var func = funcs[i];
+          writeFile(func, '.', 'frontend/controls/' + controlName + '/functions', 'xml', true);
+        }
+      }
+    });
+
+    grunt.file.write('frontend/controls/' + controlName + '/' + controlName + '.xml', json2xml(control.impl.xml), {encoding: 'utf8'});
+    //grunt.file.write('frontend/controls/' + control.getTagName() + '.xml', json2xml(control.impl.xml), {encoding: 'utf8'});
+  }
+}
+
+function processControls(controls, data) {
+  //pebbleControls
+  console.log('\n----- pebbleControls -----');
+  var controls = controls.getRecords('.');
+  for (var i = 0; i < controls.length; i++) {
+    var control = controls[i];
+    var devCode = control.get('devCode');
+    if (devCode) {
+      writeFile(devCode, '.', 'frontend/src/controls', 'js');
+    }
+    var testCode = control.get('testCode');
+    if (testCode) {
+      writeFile(testCode, '.', 'frontend/test/controls', 'js');
+    }
+    
+    var template = control.getValue('template');
+    if (template) {
+      writeFile(control, 'template', 'frontend/templates', 'hbs');
+    } 
+  }
+}
+
+function processAppInstance(appInstances, data) {
+
+  var theInstance = appInstances.get('theInstance');
+
+  //clientFiles
+  console.log('\n----- clientFiles -----');
+  var clientScripts = theInstance.getRecords('clientScripts');
+  if (clientScripts.length > 0) {
+    for (var i = 0; i < clientScripts.length; i++) {
+      var clientScript = clientScripts[i];
+      writeFile(clientScript, 'devCode', 'frontend/src', 'js');
+
+      var testCode = clientScript.get('testCode');
+      if (testCode) {
+        writeFile(testCode, '.', 'frontend/test', 'js');
+      }
+    }
+    theInstance.remove('clientScripts');
+  }
+
+  //serverFiles
+  console.log('\n----- serverFiles -----');
+  var serverScripts = theInstance.getRecords('serverScripts');
+  if (serverScripts.length > 0) {
+    for (var i = 0; i < serverScripts.length; i++) {
+      var serverScript = serverScripts[i];
+      writeFile(serverScript, 'devCode', 'server/src', 'js');
+
+      var testCode = serverScript.get('testCode');
+      if (testCode) {
+        writeFile(testCode, '.', 'server/test', 'js');
+      }
+    }
+    theInstance.remove('serverScripts');
+  }
+
+  //cssTemplates (take both css and less children)
+  console.log('\n----- cssTemplates -----');
+  var cssTemplates = theInstance.getRecords('cssTemplates');
+  if (cssTemplates.length > 0) {
+    for (var i = 0; i < cssTemplates.length; i++) {
+      var cssTemplate = cssTemplates[i];
+      writeFile(cssTemplate, 'css', 'frontend/cssTemplates', 'css');
+      var less = cssTemplate.getRecords('less');
+      for (var j = 0; j < less.length; j++) {
+        writeFile(less[j], '.', 'frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
+      }
+    }
+    theInstance.remove('cssTemplates');
+  }
+
+  //stringMaps
+  console.log('\n----- stringMaps -----');
+  var stringMaps = theInstance.getRecords('stringMaps');
+  if (stringMaps.length > 0) {
+    for (var i = 0; i < stringMaps.length; i++) {
+      var stringMap = stringMaps[i];
+      writeFile(stringMap, '.', 'frontend/stringMaps', 'xml', true);
+      var strings = stringMap.getRecords('.');
+      strings.forEach(function(string) {
+        grunt.file.write('frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
+      });
+    }
+    theInstance.remove('stringMaps');
+  }
+
+  //accessPoints
+  console.log('\n----- accessPoints -----');
+  var accessPoints = theInstance.getRecords('deployment.accessPoints');
+  if (accessPoints.length > 0) {
+    for (var i = 0; i < accessPoints.length; i++) {
+      var accessPoint = accessPoints[i];
+      writeFile(accessPoint, '.', 'frontend/accessPoints', 'xml', true);
+    }
+    theInstance.remove('deployment.accessPoints');
+  }
+
+  //description, actorGroups, deployment.theControlApp
+  grunt.file.write('theInstance.xml', json2xml(theInstance.impl.xml), {encoding: 'utf8'});
+}
+
+function writeFile(peb, contentsPath, defaultPath, defaultExt, isPebbleControl) {
+  var name = peb.getTagName();
+  var path = peb.getValue('path') || defaultPath;
+  var ext = peb.getValue('ext') || defaultExt;
+  var contents;
+  if (isPebbleControl) {
+    var innerMarkup = peb.get(contentsPath);
+    contents = json2xml(innerMarkup.impl.xml);
+  } else {
+    contents = peb.getValue(contentsPath);
+  }
+  console.log(name);
+  grunt.file.write(p.join(path, name + '.' + ext), contents, {encoding: 'utf8'});
+}
+
+function processPebbleProject(grunt, data, lib) {
+
+  var tables = lib.getRecords('.');
+  tables.forEach(function(table) {
+
+    var tableName = table.getTagName(); 
+
+    switch (tableName) {
+      case 'theModel_appInstances':
+        processAppInstance(table, data);
+      break;
+
+      case 'theModel_controls':
+        processPebbleControls(tables, table, data);
+      break;
+
+      case 'theModel_types':
+        processTypes(table, data);
+      break;
+
+      case 'theModel_services':
+        processServices(table, data);
+      break;
+
+      case 'theModel_otherFiles':
+        processOtherFiles(table, data);
+      break;
+
+      default:
+        if (tableName.indexOf('_functions') != -1) {
+        
+        } else {
+          console.log('unprocessed table: ' + tableName);
+        }
+    }
+  });
+}
+
+function processOtherProject(grunt, data, lib) {
+
+  var tables = lib.getRecords('.');
+  tables.forEach(function(table) {
+
+    var tableName = table.getTagName(); 
+
+    switch (tableName) {
+      case 'theModel_appInstances':
+        processAppInstance(table, data);
+      break;
+
+      case 'theModel_controls':
+        processControls(table, data);
+      break;
+
+      case 'theModel_otherFiles':
+        processOtherFiles(table, data);
+      break;
+
+      default:
+        console.log('unprocessed table: ' + tableName);
+    }
+
+  });
+}
+
+module.exports = function(gruntRef, data) {
+  grunt = gruntRef;
+  //build deployment
+  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
+        
+  var libStr = fs.readFileSync(data.appPath, 'utf-8');
+  var lib = new pebble.Pebble(libStr);
+
+  if (data.isPebbleProject) {
+    processPebbleProject(grunt, data, lib);
+  } else {
+    processOtherProject(grunt, data, lib);
+  }
+
+};
