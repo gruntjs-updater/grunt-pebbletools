@@ -1,5 +1,5 @@
 /*
- * grunt-pebble
+ * grunt-pebbletools
  * 
  *
  * Copyright (c) 2014 rtsunoda

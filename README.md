@@ -37,6 +37,54 @@ grunt.initConfig({
     extract: {
       outputTemplates: ['path/to/template/_file'], //the file must start with '_', deploy will create the output file without the '_'
     },
+    concat: {
+    },
+    compile: {
+    },
+    json2xml: {
+      input: 'input/file.json',
+      output: 'output/file.json'
+    },
+    xml2json: {
+      input: 'input/file.json',
+      output: 'output/file.json'
+    },
+    prettify: {
+      input: 'input/file.json',
+      output: 'output/file.json',
+      mode: 'json' //json, xml, sql, css
+    },
+    minify: {
+      input: 'input/file.json',
+      output: 'output/file.json',
+      mode: 'json' //json, xml, sql, css
+    },
+    changeSpec: {
+      input: 'input/file.json',
+      output: 'output/file.json',
+      tableFilter: function(table) {
+        var name = table.getTagName();
+        if (name === 'theModel_ ....') {
+          return table;
+          }
+      },
+      changePeb: function (peb, data) {
+
+        //do something with peb
+      	var longRef = peb.getRef(".");
+        if (longRef && longRef.indexOf("theModel") != -1) {
+          var newRef = longRef.replace("theModel", "wootwoot");
+          peb.setRef(".", newRef);
+        }
+
+        //optionally, do children
+        var recs = peb.getRecords(".");
+        for (var i = 0; i < recs.length; i++) {
+          var rec = recs[i];
+          data.changePeb(rec, data);
+        }
+      }
+    }
   },
 });
 ```

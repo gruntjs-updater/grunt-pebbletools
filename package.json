@@ -1,7 +1,7 @@
 {
   "name": "grunt-pebbletools",
   "description": "compress, extract, deploy your apps",
-  "version": "0.1.77",
+  "version": "0.1.84",
   "homepage": "",
   "author": {
     "name": "rtsunoda",

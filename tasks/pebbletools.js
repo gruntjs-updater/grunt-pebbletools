@@ -10,6 +10,11 @@ var compress = require('./lib/compress');
 var extract = require('./lib/extract');
 var deploy = require('./lib/deploy');
 var setup = require('./lib/setup');
+var compile = require('./lib/compile');
+var concat = require('./lib/concat');
+var prettyData = require('./lib/prettyData');
+var conversion = require('./lib/conversion');
+
 'use strict';
 
 module.exports = function(grunt) {
@@ -50,37 +55,47 @@ module.exports = function(grunt) {
       //grunt.log.writeln('File "' + f.dest + '" created.');
     //});
 
-			switch (this.target) {
+    var done = this.async();
+    grunt.log.writeln('STARTING ...');
+    grunt.log.writeln('');
+    switch (this.target) {
 
 				case 'compress':
-					grunt.log.writeln('STARTING COMPRESS ...');
-					grunt.log.writeln('');
 					compress(grunt, this.data);
-					grunt.log.writeln('');
-					grunt.log.writeln('DONE.');
 					break;
 				case 'extract':
-					grunt.log.writeln('STARTING EXTRACT ...');
-					grunt.log.writeln('');
 					extract(grunt, this.data);
-					grunt.log.writeln('');
-					grunt.log.writeln('DONE.');
 					break;
 				case 'deploy':
-					grunt.log.writeln('STARTING DEPLOY ...');
-					grunt.log.writeln('');
 					deploy(grunt, this.data, param1);
-					grunt.log.writeln('');
-					grunt.log.writeln('DONE.');
 					break;
 				case 'setup':
-					grunt.log.writeln('STARTING DEPLOY ...');
-					grunt.log.writeln('');
 					setup(grunt, this.data, param1);
-					grunt.log.writeln('');
-					grunt.log.writeln('DONE.');
+					break;
+				case 'concat':
+					concat(grunt, this.data);
+					break;
+				case 'compile':
+					compile(function() { done(true) }, grunt, this.data, param1);
+					break;
+				case 'json2xml':
+					conversion.json2xml(grunt, this.data);
+					break;
+				case 'xml2json':
+					conversion.xml2json(grunt, this.data);
+					break;
+				case 'prettify':
+					prettyData.prettify(grunt, this.data);
+					break;
+				case 'minify':
+					prettyData.minify(grunt, this.data);
+					break;
+				case 'changeSpec':
+					changeSpec(grunt, this.data);
 					break;
 			}
+      grunt.log.writeln('');
+      grunt.log.writeln('DONE.');
 
   });
 

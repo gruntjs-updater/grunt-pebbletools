@@ -99,8 +99,6 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
 
 module.exports = function(gruntRef, data, param1) {
   grunt = gruntRef;
-  grunt.log.write('starting ...');
   deploy(grunt, data, param1);
-  grunt.log.write('done.');
 
 };
