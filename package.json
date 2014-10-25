@@ -1,7 +1,7 @@
 {
   "name": "grunt-pebbletools",
-  "description": "compress, extract, deploy your apps",
-  "version": "0.1.84",
+  "description": "tools for pebble applications",
+  "version": "0.1.89",
   "homepage": "",
   "author": {
     "name": "rtsunoda",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "none"
+    "url": "https://github.com/rt/grunt-pebbletools.git"
   },
   "bugs": {
     "url": ""

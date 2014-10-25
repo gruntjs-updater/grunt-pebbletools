@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//causes js out or memory, might work for documents
 
 var fs = require("fs");
 var p = require("path");

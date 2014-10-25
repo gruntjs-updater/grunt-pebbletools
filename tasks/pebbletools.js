@@ -1,12 +1,4 @@
-/*
- * grunt-pebble
- * 
- *
- * Copyright (c) 2014 rtsunoda
- * Licensed under the MIT license.
- */
-
-var compress = require('./lib/compress');
+var bundle = require('./lib/bundle');
 var extract = require('./lib/extract');
 var deploy = require('./lib/deploy');
 var setup = require('./lib/setup');
@@ -22,7 +14,7 @@ module.exports = function(grunt) {
   // Please see the Grunt documentation for more information regarding task
   // creation: http://gruntjs.com/creating-tasks
 
-  grunt.registerMultiTask('pebbletools', 'compress and extract your apps', function(param1) {
+  grunt.registerMultiTask('pebbletools', 'tools for pebble applications', function(param1) {
     //// Merge task-specific and/or target-specific options with these defaults.
     //var options = this.options({
       //punctuation: '.',
@@ -60,8 +52,8 @@ module.exports = function(grunt) {
     grunt.log.writeln('');
     switch (this.target) {
 
-				case 'compress':
-					compress(grunt, this.data);
+				case 'bundle':
+					bundle(grunt, this.data);
 					break;
 				case 'extract':
 					extract(grunt, this.data);

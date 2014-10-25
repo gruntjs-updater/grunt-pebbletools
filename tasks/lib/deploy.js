@@ -1,10 +1,3 @@
-/*
- * grunt-pebble
- * 
- *
- * Copyright (c) 2014 rtsunoda
- * Licensed under the MIT license.
- */
 
 var fs = require('fs');
 var p = require('path');
