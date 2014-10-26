@@ -61,6 +61,35 @@ function compressPebbleControls(controlsPath, lib, setInLibPath) {
   }
 }
 
+function compressAccessPoints(accessPointsPath, lib, setInLibPath) {
+
+  var path = p.join(basePath, accessPointsPath);
+  if (fs.existsSync(path)) {
+    var files = fs.readdirSync(path);
+    files.forEach(function(accessPointName) {
+
+      console.log(accessPointName);
+      var doc = lib.getCreateOnNull(setInLibPath + '.' + accessPointName);
+      var accessPointDirPath = p.join(path, accessPointName);
+      if (fs.statSync(accessPointDirPath).isDirectory()) {
+        // base file
+        var filePath = p.join(accessPointDirPath, accessPointName + '.xml');
+        if (fs.existsSync(path)) {
+          var fileContents = fs.readFileSync(filePath, 'utf8');
+          doc.set('.', new pebble.Pebble(xml2json(fileContents)));
+        }
+
+        // config
+        var configPath = p.join(accessPointDirPath, 'config.json');
+        if (fs.existsSync(configPath)) { 
+          var configContents = fs.readFileSync(configPath, 'utf8');
+          doc.setMarkup('config', configContents);
+        }
+      } 
+    });
+  }
+}
+
 function processStringMaps(stringMapsPath, lib, setInLibPath) {
 
   if (stringMapsPath) { 
@@ -164,7 +193,7 @@ function processTheInstance (grunt, data, lib, instancePath) {
 
   //accessPoints
   console.log('\n----- accessPoints -----');
-  compressGlob(data.accessPoints + '/*.xml', lib, '.', instancePath + '.deployment.accessPoints', 'path', true);
+  compressAccessPoints(data.accessPoints, lib, instancePath + '.deployment.accessPoints');
 
   //cssTemplates
   console.log('\n----- cssTemplates -----');

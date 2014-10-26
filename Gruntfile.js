@@ -23,14 +23,17 @@ module.exports = function(grunt) {
       }
     },
 
-    // Before generating any new files, remove any previously-created files.
     clean: {
-      tests: ['tmp']
+      tests: ['tmp', 'server']
     },
 
     // Configuration to be run (and then tested).
     pebbletools: {
-      extract:{},
+      extract:{
+        isPebbleProject: true,
+        projectPath: 'tmp',
+        appPath: 'test/fixtures/standard.json'
+      },
       compress: {
         outputFile : 'test.json',
         configPath : 'theInstance.xml',
@@ -73,22 +76,6 @@ module.exports = function(grunt) {
         otherFiles: ['bower.json', 'Gruntfile.js', 'package.json', 'README.md', 'grunt-tasks/**/*.js'] 
       },
     },
-    default_options: {
-      options: {
-      },
-      files: {
-        'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-      }
-    },
-    custom_options: {
-      options: {
-        separator: ': ',
-        punctuation: ' !!!'
-      },
-      files: {
-        'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-      }
-    }
     // Unit tests.
     nodeunit: {
       tests: ['test/*_test.js']
@@ -106,9 +93,9 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'pebble', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'pebbletools:extract', 'nodeunit']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['jshint', 'test_extract']);
 
 };
