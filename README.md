@@ -1,4 +1,4 @@
-# grunt-pebbletools
+# grunt-pebbletools [![Build Status](https://travis-ci.org/rt/grunt-pebbletools.png)](https://travis-ci.org/rt/grunt-pebbletools)
 
 > tools for pebble projects. [pebblefields](http:pebblefields.com)
 
@@ -35,9 +35,6 @@ grunt.initConfig({
     },
     extract: {
       outputTemplates: ['path/to/template/_file'], //the file must start with '_', deploy will create the output file without the '_'
-    },
-    concat: {
-
     },
     compile: {
 
@@ -95,7 +92,8 @@ grunt.initConfig({
 
 ### Options
 
-TODO: based on config file with "files"?
 
 ## Release History
+
+
 _(Nothing yet)_
