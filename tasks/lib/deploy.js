@@ -70,7 +70,7 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
   var depObj = new pebble.shared.Deployment();
   depObj.buildDeployment(new pebble.shared.BuildDeployment(less), workspaceDs, appName, deployment, accessPointParam, function(accessPointDeployment) {
 
-    fs.writeFileSync(p.join(topDir, data.output, accessPointParam + '.json'), accessPointDeployment.toString(), 'utf8');
+    grunt.file.write(p.join(topDir, data.output, accessPointParam + '.json'), accessPointDeployment.toString(), {encoding:'utf8'});
     if (data.outputTemplates) {
       var files = grunt.file.expand(data.outputTemplates);
       files.forEach(function(filePath) {
@@ -81,7 +81,7 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
           var fileContents = fs.readFileSync(filePath, 'utf8');
           var deploymentContents = fileContents.replace('{{' + accessPointParam + '}}', accessPointDeployment.toString());
           var outputPath = p.join(topDir, elements.join('/'), file.replace('_', ''));
-          fs.writeFileSync(outputPath, deploymentContents, 'utf8');
+          grunt.file.write(outputPath, deploymentContents, {encoding:'utf8'});
         } else {
           grunt.log.warn('output template files should start with "_"'); 
         }

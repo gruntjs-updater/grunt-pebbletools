@@ -1,8 +1,13 @@
 'use strict';
 
 var grunt = require('grunt');
+var fs = require('fs');
+var p = require('path');
 var pebble = require("pebble-shared-node").pebble;
 var PebbleDataSourceImpl_Json = require("pebble-object-json").PebbleDataSourceImpl_Json;
+
+var topDir = process.cwd();
+var inPeb, outPeb;
 
 pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 /*
@@ -27,23 +32,55 @@ pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 
 exports.pebble = {
   setUp: function(done) {
+    var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
+    inPeb = new pebble.Pebble(inFile);
+    var outFile = grunt.file.read('tmp/standard_bundle.json', {encoding:'utf8'});
+    outPeb = new pebble.Pebble(outFile);
     done();
   },
   hasFiles: function(test) {
-    test.expect(1);
+    test.expect(2);
 
-    var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
-    test.ok(inFile, 'tmp/standard.json must exist');
-    var inPab = new pebble.Pebble(inFile);
-    var outFile = grunt.file.read('tmp/standard_bundle.json', {encoding:'utf8'});
-    //test.ok(outFile, 'tmp/standard_bundle.json must exist');
-    //var outPeb = new pebble.Pebble(outFile);
+    test.ok(inPeb, 'tmp/standard.json must exist');
+    test.ok(outPeb, 'tmp/standard_bundle.json must exist');
 
     test.done();
   },
 
   hasAccessPoints: function(test) {
+    test.expect(4);
 
+    var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
+    var files = fs.readdirSync('tmp/frontend/accessPoints');
+    test.equal(outPeb.getRecords(accessPointsPath).length, files.length);
+
+    var testAppControl = outPeb.get(accessPointsPath + '.testAppControl');
+    test.ok(testAppControl, 'should have testAppControl');
+    test.ok(testAppControl.getValue('config'), 'should have testAppControl config as markup');
+    test.ok(testAppControl.getRef('topControl'), 'should have testAppControl config, and ref');
+
+    test.done();
+  },
+
+  hasControls: function(test) {
+    //test.expect(1);
+
+    var tablePath = 'theModel_controls';
+    var tmpControlsPath = 'tmp/frontend/controls';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length);
+
+    //functions
+    var clientControl = outPeb.get(tablePath + '.ClientControl');
+    test.ok(clientControl, 'should have clientControl');
+    test.equal(outPeb.getRecords(tablePath + '_ClientControl_functions').length, fs.readdirSync(tmpControlsPath + '/ClientControl/functions').length);
+
+    var appControlBase = outPeb.get(tablePath + '.AppControlBase');
+    test.ok(appControlBase, 'should have appControlBase');
+    //code?
+
+    //tests
+    //test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');
     test.done();
   }
 };
