@@ -24,7 +24,7 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      tests: ['tmp', 'server']
+      tests: ['tmp']
     },
 
     // Configuration to be run (and then tested).
@@ -34,51 +34,18 @@ module.exports = function(grunt) {
         projectPath: 'tmp',
         appPath: 'test/fixtures/standard.json'
       },
-      compress: {
-        outputFile : 'test.json',
-        configPath : 'theInstance.xml',
-        clientFiles: [
-          'pebble-object/**/*.js', 
-          'pebble-shared/**/*.js', 
-          'pebble-client/src/*.js', 
-          'pebble-client/src/impl/*.js', 
-          'pebble-client/src/interfaces/*.js'
-        ],
-        serverFiles: [
-          'server/src/*.js' 
-        ],
-        serverTestFiles: [
-          'server/test/*.js' 
-        ],
-        testFiles: [
-          'pebble-client/test/*.js'
-        ],
-        templateFiles: [
-          'frontend/controls/*.xml'
-        ],
-        pebbleservices: [
-          'server/services/*.xml'
-        ],
-        templateCodeFiles: [
-          'pebble-client/src/controls/*.js'
-        ],
-        templateTestFiles: [
-          'pebble-client/test/controls/*.js'
-        ],
-        types: [
-          'frontend/types/*.xml'
-        ],
-        cssPath: 'frontend/cssTemplates',
-        accessPoints: [
-          'frontend/accessPoints/*.xml'
-        ],
-        configFiles: ['config/*.json'],
-        otherFiles: ['bower.json', 'Gruntfile.js', 'package.json', 'README.md', 'grunt-tasks/**/*.js'] 
+      bundle: {
+        isPebbleProject: true,
+        outputFile : 'tmp/standard_bundle.json',
+        projectPath: 'tmp'
       },
     },
     // Unit tests.
     nodeunit: {
-      tests: ['test/*_test.js']
+      tests: [
+        'test/extract_test.js', 
+        'test/bundle_test.js'
+      ]
     }
 
   });
@@ -91,11 +58,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
-  // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'pebbletools:extract', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'pebbletools:extract', 'pebbletools:bundle', 'nodeunit']);
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test_extract']);
+  grunt.registerTask('default', ['jshint', 'test']);
 
 };

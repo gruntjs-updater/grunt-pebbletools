@@ -5,7 +5,7 @@ var pebble = require('pebble-shared-node').pebble;
 var PebbleDataSourceImpl_Json = require('pebble-object-json').PebbleDataSourceImpl_Json;
 var PebbleDataSourceImpl = require("pebble-object-xmldom").PebbleDataSourceImpl;
 var grunt;
-var basePath = process.cwd();
+var basePath; 
 
 'use strict';
 
@@ -74,9 +74,16 @@ function compressAccessPoints(accessPointsPath, lib, setInLibPath) {
       if (fs.statSync(accessPointDirPath).isDirectory()) {
         // base file
         var filePath = p.join(accessPointDirPath, accessPointName + '.xml');
-        if (fs.existsSync(path)) {
+        if (fs.existsSync(filePath)) {
           var fileContents = fs.readFileSync(filePath, 'utf8');
           doc.set('.', new pebble.Pebble(xml2json(fileContents)));
+        }
+
+        // topControl
+        var topControlPath = p.join(accessPointDirPath, 'topControl.xml');
+        if (fs.existsSync(topControlPath)) {
+          var fileContents = fs.readFileSync(topControlPath, 'utf8');
+          doc.set('topControl', new pebble.Pebble(xml2json(fileContents)));
         }
 
         // config
@@ -181,8 +188,76 @@ function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleCont
   }
 }
 
-function processTheInstance (grunt, data, lib, instancePath) {
+function processPebbleProject(grunt, data, lib, instancePath) {
 
+  //main configPath
+  console.log('\n----- theInstance -----');
+  var config = fs.readFileSync(p.join(basePath, 'theInstance.xml'), 'utf-8');
+  lib.set(instancePath, new pebble.Pebble(xml2json(config)));
+  
+  //------ appInstance start
+  //clientFiles
+  console.log('\n----- clientFiles -----');
+  compressGlob(['frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
+  
+  //clientTestFiles
+  console.log('\n----- clientTestFiles -----');
+  compressGlob(['frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
+
+  //accessPoints
+  console.log('\n----- accessPoints -----');
+  compressAccessPoints('frontend/accessPoints', lib, instancePath + '.deployment.accessPoints');
+
+  //cssTemplates
+  console.log('\n----- cssTemplates -----');
+  processCssTemplates('frontend/cssTemplates', lib, instancePath + '.cssTemplates');
+
+  //stringMaps
+  console.log('\n----- stringMaps -----');
+  processStringMaps('frontend/stringMaps', lib, instancePath + '.stringMaps');
+
+  //serverFiles
+  console.log('\n----- serverFiles -----');
+  compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
+
+  //serverTestFiles
+  console.log('\n----- serverTestFiles -----');
+  compressGlob(['server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
+  //------ appInstance end
+
+  //templatefiles
+  console.log('\n----- controls -----');
+  compressPebbleControls('frontend/controls', lib, 'theModel_controls');
+
+  //templateCodeFiles
+  console.log('\n----- templateCodeFiles -----');
+  compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
+
+  //templateTestFiles
+  console.log('\n----- templateTestFiles -----');
+  compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
+
+  //types
+  console.log('\n----- types -----');
+  compressGlob('frontend/types/*.xml', lib, '.', 'theModel_types', 'path', true);
+  
+  //services
+  console.log('\n----- services -----');
+  compressGlob('server/services/*.xml', lib, '.', 'theModel_services', 'path', true);
+  
+  fs.writeFileSync(data.outputFile || 'compressed.json', lib.toString(), 'utf8');
+}
+
+function processOtherProject(grunt, data, lib, instancePath) {
+
+  //main configPath
+  console.log('\n----- configPath -----');
+  if (data.configPath) {
+    var config = fs.readFileSync(p.join(basePath, data.configPath), 'utf-8');
+    lib.setMarkup(instancePath + '.config', config);
+  }
+
+  //------ appInstance start
   //clientFiles
   console.log('\n----- clientFiles -----');
   compressGlob(data.clientFiles, lib, 'devCode', instancePath + '.clientScripts', 'path');
@@ -193,7 +268,7 @@ function processTheInstance (grunt, data, lib, instancePath) {
 
   //accessPoints
   console.log('\n----- accessPoints -----');
-  compressAccessPoints(data.accessPoints, lib, instancePath + '.deployment.accessPoints');
+  compressAccessPoints('frontend/accessPoints', lib, instancePath + '.deployment.accessPoints');
 
   //cssTemplates
   console.log('\n----- cssTemplates -----');
@@ -210,49 +285,7 @@ function processTheInstance (grunt, data, lib, instancePath) {
   //serverTestFiles
   console.log('\n----- serverTestFiles -----');
   compressGlob(data.serverTestFiles, lib, 'testCode', instancePath + '.serverScripts', 'path');
-}
-function processPebbleProject(grunt, data, lib, instancePath) {
-
-  //main configPath
-  console.log('\n----- theInstance -----');
-  var config = fs.readFileSync(p.join(basePath, data.configPath), 'utf-8');
-  lib.set(instancePath, new pebble.Pebble(xml2json(config)));
-  
-  processTheInstance(grunt, data, lib, instancePath);
-
-  //templatefiles
-  console.log('\n----- controls -----');
-  compressPebbleControls(data.controls, lib, 'theModel_controls');
-
-  //templateCodeFiles
-  console.log('\n----- templateCodeFiles -----');
-  compressGlob(data.templateCodeFiles, lib, 'code', 'theModel_controls', 'path');
-
-  //templateTestFiles
-  console.log('\n----- templateTestFiles -----');
-  compressGlob(data.templateTestFiles, lib, 'testCode', 'theModel_controls', 'path');
-
-  //types
-  console.log('\n----- types -----');
-  compressGlob(data.types + '/*.xml', lib, '.', 'theModel_types', 'path', true);
-  
-  //services
-  console.log('\n----- services -----');
-  compressGlob(data.services + '/*.xml', lib, '.', 'theModel_services', 'path', true);
-  
-  fs.writeFileSync(data.outputFile || 'compressed.json', lib.toString(), 'utf8');
-}
-
-function processOtherProject(grunt, data, lib, instancePath) {
-
-  //main configPath
-  console.log('\n----- configPath -----');
-  if (data.configPath) {
-    var config = fs.readFileSync(p.join(basePath, data.configPath), 'utf-8');
-    lib.setMarkup(instancePath + '.config', config);
-  }
-
-  processTheInstance(grunt, data, lib, instancePath);
+  //------ appInstance end
 
   //otherFiles
   console.log('\n----- otherFiles -----');
@@ -270,10 +303,6 @@ function processOtherProject(grunt, data, lib, instancePath) {
   console.log('\n----- templateTestFiles -----');
   compressGlob(data.templateTestFiles, lib, 'testCode', 'theModel_controls', 'path');
 
-  //access point configs
-  console.log('\n----- configFiles -----');
-  compressGlob(data.configFiles, lib, 'config', instancePath + '.deployment.accessPoints', 'configPath');
-
   //access point views (html)
   console.log('\n----- viewFiles -----');
   compressGlob(data.viewFiles, lib, 'htmlpage', instancePath + '.deployment.accessPoints', 'viewPath');
@@ -284,6 +313,11 @@ function processOtherProject(grunt, data, lib, instancePath) {
 
 module.exports = function(gruntRef, data) {
   grunt = gruntRef;
+  if (data.projectPath) {
+    basePath = p.join(process.cwd(), data.projectPath);
+  } else {
+    basePath = process.cwd();
+  }
 
   //build deployment
   pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
