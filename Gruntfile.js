@@ -29,14 +29,20 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     pebbletools: {
-      extract:{
-        isPebbleProject: true,
+      extractPebble:{
         projectPath: 'tmp',
         appPath: 'test/fixtures/standard.json'
       },
-      bundle: {
-        isPebbleProject: true,
+      bundlePebble: {
         outputFile : 'tmp/standard_bundle.json',
+        projectPath: 'tmp'
+      },
+      extract:{
+        projectPath: 'tmp',
+        appPath: 'test/fixtures/appstack.json'
+      },
+      bundle: {
+        outputFile : 'tmp/appstack_bundle.json',
         projectPath: 'tmp'
       },
     },
@@ -58,7 +64,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  grunt.registerTask('test', ['clean', 'pebbletools:extract', 'pebbletools:bundle', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'pebbletools:extractPebble', 'pebbletools:bundlePebble', 'nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

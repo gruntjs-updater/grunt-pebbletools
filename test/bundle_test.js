@@ -30,7 +30,7 @@ pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
     test.ifError(value)
 */
 
-exports.pebble = {
+exports.bundle_pebble_test = {
   setUp: function(done) {
     var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
     inPeb = new pebble.Pebble(inFile);
@@ -62,6 +62,39 @@ exports.pebble = {
     test.done();
   },
 
+  hasClientScripts: function(test) {
+    test.expect(1);
+
+    var tablePath = 'theModel_appInstances.theInstance.clientScripts';
+    var tmpControlsPath = 'tmp/frontend/src';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+
+    test.done();
+  },
+
+  hasServerScripts: function(test) {
+    test.expect(1);
+
+    var tablePath = 'theModel_appInstances.theInstance.serverScripts';
+    var tmpControlsPath = 'tmp/server/src';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+
+    test.done();
+  },
+
+  hasCssTemplates: function(test) {
+    test.expect(1);
+
+    var tablePath = 'theModel_appInstances.theInstance.cssTemplates';
+    var tmpControlsPath = 'tmp/frontend/cssTemplates';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of templates');
+
+    test.done();
+  },
+
   hasControls: function(test) {
     //test.expect(1);
 
@@ -77,10 +110,34 @@ exports.pebble = {
 
     var appControlBase = outPeb.get(tablePath + '.AppControlBase');
     test.ok(appControlBase, 'should have appControlBase');
-    //code?
+
+    //code
+    //test.ok(appControlBase.getValue('devCoe'), 'should have dev code as markup');
 
     //tests
-    //test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');
+    test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');
+    test.done();
+  },
+
+  hasServices: function(test) {
+    test.expect(1);
+
+    var tablePath = 'theModel_services';
+    var tmpControlsPath = 'tmp/server/services';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length);
+
+    test.done();
+  },
+
+  hasTypes: function(test) {
+    test.expect(1);
+
+    var tablePath = 'theModel_types';
+    var tmpControlsPath = 'tmp/frontend/types';
+    var files = fs.readdirSync(tmpControlsPath);
+    test.equal(outPeb.getRecords(tablePath).length, files.length);
+
     test.done();
   }
 };

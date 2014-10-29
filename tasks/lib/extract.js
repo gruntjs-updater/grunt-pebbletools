@@ -210,7 +210,13 @@ function writeFile(peb, contentsPath, defaultPath, defaultExt, isPebbleControl) 
   grunt.file.write(p.join(path, name + '.' + ext), contents, {encoding: 'utf8'});
 }
 
-function processPebbleProject(grunt, data, lib) {
+function extractPebbleProject(gruntRef, data) {
+
+  grunt = gruntRef;
+
+  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
+  var libStr = fs.readFileSync(data.appPath, 'utf-8');
+  var lib = new pebble.Pebble(libStr);
 
   var tables = lib.getRecords('.');
   tables.forEach(function(table) {
@@ -248,7 +254,13 @@ function processPebbleProject(grunt, data, lib) {
   });
 }
 
-function processOtherProject(grunt, data, lib) {
+function extractOtherProject(gruntRef, data) {
+
+  grunt = gruntRef;
+
+  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
+  var libStr = fs.readFileSync(data.appPath, 'utf-8');
+  var lib = new pebble.Pebble(libStr);
 
   var tables = lib.getRecords('.');
   tables.forEach(function(table) {
@@ -275,17 +287,5 @@ function processOtherProject(grunt, data, lib) {
   });
 }
 
-module.exports = function(gruntRef, data) {
-  grunt = gruntRef;
-  //build deployment
-  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
-        
-  var libStr = fs.readFileSync(data.appPath, 'utf-8');
-  var lib = new pebble.Pebble(libStr);
-
-  if (data.isPebbleProject) {
-    processPebbleProject(grunt, data, lib);
-  } else {
-    processOtherProject(grunt, data, lib);
-  }
-};
+module.exports.extractPebbleProject = extractPebbleProject;
+module.exports.extractOtherProject = extractOtherProject;

@@ -61,6 +61,27 @@ function compressPebbleControls(controlsPath, lib, setInLibPath) {
   }
 }
 
+function getFiles(baseDir, config, files, excludePatt) {
+  if (config.imports) {
+    for (var i = 0; i < config.imports.length; i++) {
+      var importLibName = config.imports[i];
+      var importLibPath = p.join(baseDir, importLibName);
+      var importLibDir = importLibPath.substring(0, importLibPath.lastIndexOf('/'));
+      var s = fs.readFileSync(importLibPath);
+      var importLib = JSON.parse(s.toString());
+      files = getFiles(importLibDir, importLib, files, excludePatt);
+    }
+  }
+  for (var k = 0; k < config.files.length; k++) {
+    var file = config.files[k];
+
+    if (!excludePatt || !file.match(excludePatt)) {
+      var absPath = p.join(baseDir, config.basePath, file);
+      files.push(absPath.replace(process.cwd() + '/', ''));
+    }
+  }
+  return files;
+}
 function compressAccessPoints(accessPointsPath, lib, setInLibPath) {
 
   var path = p.join(basePath, accessPointsPath);
@@ -170,13 +191,12 @@ function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleCont
   console.log(file);
   if (file.indexOf('.') != 0) {
     pathPath = pathPath || 'path'; //some docs need to use specific paths
-    var filePath = p.join(basePath, file);
     var fileName = file.split('/').pop();
     var fileElements = fileName.split('.');
     var ext = fileElements.pop();
     var name = fileElements.join('_'); //replace . with _
     var doc = lib.getCreateOnNull(setInLibPath + '.' + name);
-    var fileContents = fs.readFileSync(filePath, 'utf8');
+    var fileContents = fs.readFileSync(file, 'utf8');
     if (isPebbleControl) {
       doc.set(setInDocPath, new pebble.Pebble(xml2json(fileContents)));
     } else {
@@ -188,7 +208,21 @@ function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleCont
   }
 }
 
-function processPebbleProject(grunt, data, lib, instancePath) {
+function bundlePebbleProject(gruntRef, data) {
+  
+  grunt = gruntRef;
+ 
+  if (data.projectPath) {
+    basePath = p.join(process.cwd(), data.projectPath);
+  } else {
+    basePath = process.cwd();
+  }
+
+  //build deployment
+  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
+  var instancePath = 'theModel_appInstances.theInstance'; 
+  var fileName = data.outputFile || 'compressed.json';
+  var lib = new pebble.Pebble(fileName.split('.')[0]);
 
   //main configPath
   console.log('\n----- theInstance -----');
@@ -198,11 +232,11 @@ function processPebbleProject(grunt, data, lib, instancePath) {
   //------ appInstance start
   //clientFiles
   console.log('\n----- clientFiles -----');
-  compressGlob(['frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
+  compressGlob([data.projectPath + '/frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
   
   //clientTestFiles
   console.log('\n----- clientTestFiles -----');
-  compressGlob(['frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
+  compressGlob([data.projectPath + '/frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
 
   //accessPoints
   console.log('\n----- accessPoints -----');
@@ -218,11 +252,11 @@ function processPebbleProject(grunt, data, lib, instancePath) {
 
   //serverFiles
   console.log('\n----- serverFiles -----');
-  compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
+  compressGlob([data.projectPath + '/server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
 
   //serverTestFiles
   console.log('\n----- serverTestFiles -----');
-  compressGlob(['server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
+  compressGlob([data.projectPath + '/server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
   //------ appInstance end
 
   //templatefiles
@@ -231,24 +265,38 @@ function processPebbleProject(grunt, data, lib, instancePath) {
 
   //templateCodeFiles
   console.log('\n----- templateCodeFiles -----');
-  compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
+  compressGlob([data.projectPath + '/frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
 
   //templateTestFiles
   console.log('\n----- templateTestFiles -----');
-  compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
+  compressGlob([data.projectPath + '/frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
 
   //types
   console.log('\n----- types -----');
-  compressGlob('frontend/types/*.xml', lib, '.', 'theModel_types', 'path', true);
+  compressGlob([data.projectPath + '/frontend/types/*.xml'], lib, '.', 'theModel_types', 'path', true);
   
   //services
   console.log('\n----- services -----');
-  compressGlob('server/services/*.xml', lib, '.', 'theModel_services', 'path', true);
+  compressGlob([data.projectPath + '/server/services/*.xml'], lib, '.', 'theModel_services', 'path', true);
   
   fs.writeFileSync(data.outputFile || 'compressed.json', lib.toString(), 'utf8');
 }
 
-function processOtherProject(grunt, data, lib, instancePath) {
+function bundleOtherProject(gruntRef, data) {
+
+  grunt = gruntRef;
+
+  if (data.projectPath) {
+    basePath = p.join(process.cwd(), data.projectPath);
+  } else {
+    basePath = process.cwd();
+  }
+
+  //build deployment
+  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
+  var instancePath = 'theModel_appInstances.theInstance'; 
+  var fileName = data.outputFile || 'compressed.json';
+  var lib = new pebble.Pebble(fileName.split('.')[0]);
 
   //main configPath
   console.log('\n----- configPath -----');
@@ -311,24 +359,5 @@ function processOtherProject(grunt, data, lib, instancePath) {
 
 } 
 
-module.exports = function(gruntRef, data) {
-  grunt = gruntRef;
-  if (data.projectPath) {
-    basePath = p.join(process.cwd(), data.projectPath);
-  } else {
-    basePath = process.cwd();
-  }
-
-  //build deployment
-  pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
-  var instancePath = 'theModel_appInstances.theInstance'; 
-  var fileName = data.outputFile || 'compressed.json';
-  var lib = new pebble.Pebble(fileName.split('.')[0]);
-
-  if (data.isPebbleProject) {
-    processPebbleProject(grunt, data, lib, instancePath);
-  } else {
-    processOtherProject(grunt, data, lib, instancePath);
-  }
-
-};
+module.exports.bundlePebbleProject = bundlePebbleProject;
+module.exports.bundleOtherProject = bundleOtherProject;

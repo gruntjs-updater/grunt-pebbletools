@@ -18,10 +18,16 @@ module.exports = function(grunt) {
     switch (this.target) {
 
 				case 'bundle':
-					bundle(grunt, this.data);
+					bundle.bundleOtherProject(grunt, this.data);
+					break;
+				case 'bundlePebble':
+					bundle.bundlePebbleProject(grunt, this.data);
 					break;
 				case 'extract':
-					extract(grunt, this.data);
+					extract.extractOtherProject(grunt, this.data);
+					break;
+				case 'extractPebble':
+					extract.extractPebbleProject(grunt, this.data);
 					break;
 				case 'deploy':
 					deploy(grunt, this.data, param1);
