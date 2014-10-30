@@ -32,112 +32,121 @@ pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 
 exports.bundle_pebble_test = {
   setUp: function(done) {
-    var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
-    inPeb = new pebble.Pebble(inFile);
-    var outFile = grunt.file.read('tmp/standard_bundle.json', {encoding:'utf8'});
+    //var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
+    //inPeb = new pebble.Pebble(inFile);
+    var outFile = grunt.file.read('tmp/appstack_bundle.json', {encoding:'utf8'});
     outPeb = new pebble.Pebble(outFile);
     done();
   },
-  hasFiles: function(test) {
-    test.expect(2);
+  //hasFiles: function(test) {
+    //test.expect(2);
 
-    test.ok(inPeb, 'tmp/standard.json must exist');
-    test.ok(outPeb, 'tmp/standard_bundle.json must exist');
+    //test.ok(inPeb, 'tmp/standard.json must exist');
+    //test.ok(outPeb, 'tmp/standard_bundle.json must exist');
+
+    //test.done();
+  //},
+
+  hasClientCode: function(test) {
+
+    var path = 'theModel_appInstances.theInstance.clientScripts';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('devCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
 
     test.done();
   },
 
   hasAccessPoints: function(test) {
-    test.expect(4);
 
     var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
-    var files = fs.readdirSync('tmp/frontend/accessPoints');
-    test.equal(outPeb.getRecords(accessPointsPath).length, files.length);
 
-    var testAppControl = outPeb.get(accessPointsPath + '.testAppControl');
-    test.ok(testAppControl, 'should have testAppControl');
-    test.ok(testAppControl.getValue('config'), 'should have testAppControl config as markup');
-    test.ok(testAppControl.getRef('topControl'), 'should have testAppControl config, and ref');
-
-    test.done();
-  },
-
-  hasClientScripts: function(test) {
-    test.expect(1);
-
-    var tablePath = 'theModel_appInstances.theInstance.clientScripts';
-    var tmpControlsPath = 'tmp/frontend/src';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
-
-    test.done();
-  },
-
-  hasServerScripts: function(test) {
-    test.expect(1);
-
-    var tablePath = 'theModel_appInstances.theInstance.serverScripts';
-    var tmpControlsPath = 'tmp/server/src';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+    var accessPoints = outPeb.getRecords(accessPointsPath);
+    accessPoints.forEach(function(accessPoint) {
+      if (accessPoint.get('htmlpage') != null) {
+        test.ok(grunt.file.read(accessPoint.getValue('viewPath'), {encodeing:'utf8'}), 'should have view file in viewPath');
+      }
+      if (accessPoint.get('config') != null) {
+        test.ok(grunt.file.read(accessPoint.getValue('configPath'), {encodeing:'utf8'}), 'should have config file in configPath');
+      }
+    });
 
     test.done();
   },
 
   hasCssTemplates: function(test) {
-    test.expect(1);
 
-    var tablePath = 'theModel_appInstances.theInstance.cssTemplates';
-    var tmpControlsPath = 'tmp/frontend/cssTemplates';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of templates');
+    var path = 'theModel_appInstances.theInstance.cssTemplates';
 
-    test.done();
-  },
-
-  hasControls: function(test) {
-    //test.expect(1);
-
-    var tablePath = 'theModel_controls';
-    var tmpControlsPath = 'tmp/frontend/controls';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length);
-
-    //functions
-    var clientControl = outPeb.get(tablePath + '.ClientControl');
-    test.ok(clientControl, 'should have clientControl');
-    test.equal(outPeb.getRecords(tablePath + '_ClientControl_functions').length, fs.readdirSync(tmpControlsPath + '/ClientControl/functions').length);
-
-    var appControlBase = outPeb.get(tablePath + '.AppControlBase');
-    test.ok(appControlBase, 'should have appControlBase');
-
-    //code
-    //test.ok(appControlBase.getValue('devCoe'), 'should have dev code as markup');
-
-    //tests
-    test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');
-    test.done();
-  },
-
-  hasServices: function(test) {
-    test.expect(1);
-
-    var tablePath = 'theModel_services';
-    var tmpControlsPath = 'tmp/server/services';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length);
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      //if (peb.get('devCode') != null) {
+        //test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      //}
+      //if (peb.get('testCode') != null) {
+        //test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      //}
+    });
 
     test.done();
   },
 
-  hasTypes: function(test) {
-    test.expect(1);
+  hasServerCode: function(test) {
 
-    var tablePath = 'theModel_types';
-    var tmpControlsPath = 'tmp/frontend/types';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length);
+    var path = 'theModel_appInstances.theInstance.serverScripts';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('devCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
+
+    test.done();
+  },
+
+  hasTemplates: function(test) {
+
+    var path = 'theModel_controls';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('template') != null) {
+        test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
+      }
+      if (peb.get('code') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
+
+    test.done();
+  },
+  
+  hasOtherFiles: function(test) {
+
+    var path = 'theModel_otherFiles';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('contents') != null) {
+        test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
+      }
+    });
 
     test.done();
   }
+
 };

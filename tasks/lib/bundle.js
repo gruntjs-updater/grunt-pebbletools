@@ -26,6 +26,28 @@ function compressGlob(glob, lib, setInDocPath, setInLibPath, pathPath, isPebbleC
     });
   }
 }
+
+function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleControl) {
+  console.log(file);
+  if (file.indexOf('.') != 0) {
+    pathPath = pathPath || 'path'; //some docs need to use specific paths
+    var fileName = file.split('/').pop();
+    var fileElements = fileName.split('.');
+    var ext = fileElements.pop();
+    var name = fileElements.join('_'); //replace . with _
+    var doc = lib.getCreateOnNull(setInLibPath + '.' + name);
+    var fileContents = fs.readFileSync(file, 'utf8');
+    if (isPebbleControl) {
+      doc.set(setInDocPath, new pebble.Pebble(xml2json(fileContents)));
+    } else {
+      doc.setMarkup(setInDocPath, fileContents);
+    }
+    doc.setValue(pathPath, file);
+    doc.setValue('ext', ext);
+    lib.set(setInLibPath + '.' + name, doc);
+  }
+}
+
 function compressPebbleControls(controlsPath, lib, setInLibPath) {
 
   var path = p.join(basePath, controlsPath);
@@ -187,27 +209,6 @@ function processCssTemplates(cssPath, lib, setInLibPath) {
   }
 }
 
-function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleControl) {
-  console.log(file);
-  if (file.indexOf('.') != 0) {
-    pathPath = pathPath || 'path'; //some docs need to use specific paths
-    var fileName = file.split('/').pop();
-    var fileElements = fileName.split('.');
-    var ext = fileElements.pop();
-    var name = fileElements.join('_'); //replace . with _
-    var doc = lib.getCreateOnNull(setInLibPath + '.' + name);
-    var fileContents = fs.readFileSync(file, 'utf8');
-    if (isPebbleControl) {
-      doc.set(setInDocPath, new pebble.Pebble(xml2json(fileContents)));
-    } else {
-      doc.setMarkup(setInDocPath, fileContents);
-    }
-    doc.setValue(pathPath, file);
-    doc.setValue('ext', ext);
-    lib.set(setInLibPath + '.' + name, doc);
-  }
-}
-
 function bundlePebbleProject(gruntRef, data) {
   
   grunt = gruntRef;
@@ -308,15 +309,19 @@ function bundleOtherProject(gruntRef, data) {
   //------ appInstance start
   //clientFiles
   console.log('\n----- clientFiles -----');
-  compressGlob(data.clientFiles, lib, 'devCode', instancePath + '.clientScripts', 'path');
+  compressGlob(data.clientFiles, lib, 'devCode', instancePath + '.clientScripts', 'codePath');
   
   //clientTestFiles
   console.log('\n----- clientTestFiles -----');
-  compressGlob(data.clientTestFiles, lib, 'testCode', instancePath + '.clientScripts', 'path');
+  compressGlob(data.clientTestFiles, lib, 'testCode', instancePath + '.clientScripts', 'testCodePath');
 
-  //accessPoints
-  console.log('\n----- accessPoints -----');
-  compressAccessPoints('frontend/accessPoints', lib, instancePath + '.deployment.accessPoints');
+  //accessPoints 
+  console.log('\n----- accessPoint configs -----');
+  compressGlob(data.accessPoints, lib, 'config', instancePath + '.deployment.accessPoints', 'configPath');
+
+  //access point views (html)
+  console.log('\n----- viewFiles -----');
+  compressGlob(data.viewFiles, lib, 'htmlpage', instancePath + '.deployment.accessPoints', 'viewPath');
 
   //cssTemplates
   console.log('\n----- cssTemplates -----');
@@ -328,16 +333,12 @@ function bundleOtherProject(gruntRef, data) {
 
   //serverFiles
   console.log('\n----- serverFiles -----');
-  compressGlob(data.serverFiles, lib, 'devCode', instancePath + '.serverScripts', 'path');
+  compressGlob(data.serverFiles, lib, 'devCode', instancePath + '.serverScripts', 'codePath');
 
   //serverTestFiles
   console.log('\n----- serverTestFiles -----');
-  compressGlob(data.serverTestFiles, lib, 'testCode', instancePath + '.serverScripts', 'path');
+  compressGlob(data.serverTestFiles, lib, 'testCode', instancePath + '.serverScripts', 'testCodePath');
   //------ appInstance end
-
-  //otherFiles
-  console.log('\n----- otherFiles -----');
-  compressGlob(data.otherFiles, lib, 'contents', 'theModel_otherFiles', 'path');
 
   //templateFiles
   console.log('\n----- templateFiles -----');
@@ -345,17 +346,18 @@ function bundleOtherProject(gruntRef, data) {
 
   //templateCodeFiles
   console.log('\n----- templateCodeFiles -----');
-  compressGlob(data.templateCodeFiles, lib, 'code', 'theModel_controls', 'path');
+  compressGlob(data.templateCodeFiles, lib, 'code', 'theModel_controls', 'codePath');
 
   //templateTestFiles
   console.log('\n----- templateTestFiles -----');
-  compressGlob(data.templateTestFiles, lib, 'testCode', 'theModel_controls', 'path');
+  compressGlob(data.templateTestFiles, lib, 'testCode', 'theModel_controls', 'testCodePath');
 
-  //access point views (html)
-  console.log('\n----- viewFiles -----');
-  compressGlob(data.viewFiles, lib, 'htmlpage', instancePath + '.deployment.accessPoints', 'viewPath');
+  //otherFiles
+  console.log('\n----- otherFiles -----');
+  compressGlob(data.otherFiles, lib, 'contents', 'theModel_otherFiles', 'path');
 
-  fs.writeFileSync(data.outputFile || 'compressed.json', lib.toString(), 'utf8');
+
+  fs.writeFileSync(data.outputFile || 'project-bundle.json', lib.toString(), 'utf8');
 
 } 
 

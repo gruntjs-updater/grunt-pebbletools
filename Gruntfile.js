@@ -43,14 +43,36 @@ module.exports = function(grunt) {
       },
       bundle: {
         outputFile : 'tmp/appstack_bundle.json',
-        projectPath: 'tmp'
+        projectPath: 'tmp',
+        clientFiles: [
+          'tmp/frontend/scenarios/components/*.js', 'tmp/frontend/scenarios/controllers/*.js', 'tmp/frontend/scenarios/models/*.js', 'tmp/frontend/scenarios/routes/**/*.js',
+          'tmp/frontend/sessions/collections/*.js', 'tmp/frontend/sessions/models/*.js', 'tmp/frontend/sessions/router.js' 
+        ],
+        clientTestFiles: [ ],
+        cssTemplates: null,
+        serverFiles: [ ],
+        serverTestFiles: [ ],
+        templateFiles: [
+          'tmp/frontend/scenarios/templates/**/*.hbs',
+          'tmp/frontend/sessions/templates/*.html'
+        ],
+        templateCodeFiles: [
+          'tmp/frontend/sessions/views/*.js'
+        ],
+        templateTestFiles: [ ],
+        accessPoints: ['tmp/config/*.json'],
+        viewFiles: ['tmp/views/*.html'],
+        otherFiles: ['tmp/app.js', 'tmp/bower.json', 'tmp/Gruntfile.js', 'tmp/package.json', 'tmp/README.md', 'tmp/grunt-tasks/**/*.js'] 
       },
     },
     // Unit tests.
     nodeunit: {
-      tests: [
-        'test/extract_test.js', 
-        'test/bundle_test.js'
+      testPebble: [
+        'test/extract_pebble_test.js', 
+        'test/bundle_pebble_test.js'
+      ],
+      testOther: [
+        'test/bundle_test.js', 
       ]
     }
 
@@ -64,7 +86,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  grunt.registerTask('test', ['clean', 'pebbletools:extractPebble', 'pebbletools:bundlePebble', 'nodeunit']);
+  grunt.registerTask('test', ['clean', 'pebbletools:extractPebble', 'pebbletools:bundlePebble', 'nodeunit:testPebble']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
