@@ -1,6 +1,15 @@
 'use strict';
 
 var grunt = require('grunt');
+var fs = require('fs');
+var p = require('path');
+var pebble = require("pebble-shared-node").pebble;
+var PebbleDataSourceImpl_Json = require("pebble-object-json").PebbleDataSourceImpl_Json;
+
+var topDir = process.cwd();
+var outPeb;
+
+pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -22,60 +31,116 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
+/**
+ * TODO: extract tests are the same as bundle_test except with different pebble file to check against!!!
+ */
 exports.pebble = {
   setUp: function(done) {
+    var file = grunt.file.read('test/fixtures/appstack.json', {encoding:'utf8'});
+    outPeb = new pebble.Pebble(file);
     done();
   },
-  hasInstance: function(test) {
-    test.expect(1);
 
-    test.ok(grunt.file.read('tmp/theInstance.xml'), 'should have extracted theInstance');
+  hasClientCode: function(test) {
+
+    var path = 'theModel_appInstances.theInstance.clientScripts';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('devCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
 
     test.done();
   },
 
   hasAccessPoints: function(test) {
 
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/testAppControl.xml'), 'accessPoint');
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/topControl.xml'), 'accessPoint/topControl');
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/config.json'), 'accessPoint/config');
+    var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
 
-    test.done();
-  },
+    var accessPoints = outPeb.getRecords(accessPointsPath);
+    accessPoints.forEach(function(accessPoint) {
+      if (accessPoint.get('htmlpage') != null) {
+        test.ok(grunt.file.read(accessPoint.getValue('viewPath'), {encodeing:'utf8'}), 'should have view file in viewPath');
+      }
+      if (accessPoint.get('config') != null) {
+        test.ok(grunt.file.read(accessPoint.getValue('configPath'), {encodeing:'utf8'}), 'should have config file in configPath');
+      }
+    });
 
-  hasControls: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/controls/ClientControl/ClientControl.xml'), 'controls/ClientControl');
-    test.ok(grunt.file.read('tmp/frontend/controls/ClientControl/functions/getData.xml'), 'controls/functions/getData');
     test.done();
   },
 
   hasCssTemplates: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/cssTemplates/standard.css'), 'cssTemplates/standard.css');
+
+    var path = 'theModel_appInstances.theInstance.cssTemplates';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      //if (peb.get('devCode') != null) {
+        //test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      //}
+      //if (peb.get('testCode') != null) {
+        //test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      //}
+    });
+
     test.done();
   },
 
-  hasClientScripts: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/src/testServer.js'), 'src/testServer.js');
+  hasServerCode: function(test) {
+
+    var path = 'theModel_appInstances.theInstance.serverScripts';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('devCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
+
     test.done();
   },
 
-  hasClientTests: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/test/controls/ArrayTreeBase.js'), 'test/ArrayTreeBase.js');
+  hasTemplates: function(test) {
+
+    var path = 'theModel_controls';
+
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('template') != null) {
+        test.ok(grunt.file.read(peb.getValue('templatePath'), {encodeing:'utf8'}), 'should have file in templatePath');
+      }
+      if (peb.get('code') != null) {
+        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
+      }
+      if (peb.get('testCode') != null) {
+        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
+      }
+    });
+
     test.done();
   },
+  
+  hasOtherFiles: function(test) {
 
-  hasTypes: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/types/text.xml'), 'types/text.xml');
-    test.done();
-  },
+    var path = 'theModel_otherFiles';
 
-  hasServerServices: function(test) {
-    test.ok(grunt.file.read('tmp/server/services/doInit.xml'), 'server/services/doInit.xml');
-    test.done();
-  },
+    var recs = outPeb.getRecords(path);
+    recs.forEach(function(peb) {
+      if (peb.get('contents') != null) {
+        test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
+      }
+    });
 
-  hasServerScripts: function(test) {
-    //test.ok(grunt.file.read('tmp/server/src/a0.js'), 'server/src/a0.js');
     test.done();
   }
+
 };

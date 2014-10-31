@@ -342,7 +342,7 @@ function bundleOtherProject(gruntRef, data) {
 
   //templateFiles
   console.log('\n----- templateFiles -----');
-  compressGlob(data.templateFiles, lib, 'template', 'theModel_controls', 'path');
+  compressGlob(data.templateFiles, lib, 'template', 'theModel_controls', 'templatePath');
 
   //templateCodeFiles
   console.log('\n----- templateCodeFiles -----');

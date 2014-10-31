@@ -67,12 +67,17 @@ module.exports = function(grunt) {
     },
     // Unit tests.
     nodeunit: {
-      testPebble: [
-        'test/extract_pebble_test.js', 
+      testPebbleBundle: [
         'test/bundle_pebble_test.js'
       ],
-      testOther: [
+      testPebbleExtract: [
+        'test/extract_pebble_test.js', 
+      ],
+      testOtherBundle: [
         'test/bundle_test.js', 
+      ],
+      testOtherExtract: [
+        'test/extract_test.js', 
       ]
     }
 
@@ -86,7 +91,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  grunt.registerTask('test', ['clean', 'pebbletools:extractPebble', 'pebbletools:bundlePebble', 'nodeunit:testPebble']);
+  grunt.registerTask('test', ['testPebbleExtract', 'testPebbleBundle', 'testOtherExtract', 'testOtherBundle']);
+  grunt.registerTask('testPebbleExtract', ['clean', 'pebbletools:extractPebble', 'nodeunit:testPebbleExtract']);
+  grunt.registerTask('testPebbleBundle', ['pebbletools:bundlePebble', 'nodeunit:testPebbleBundle']);
+  grunt.registerTask('testOtherExtract', ['clean', 'pebbletools:extract', 'nodeunit:testOtherExtract']);
+  grunt.registerTask('testOtherBundle', ['pebbletools:bundle', 'nodeunit:testOtherBundle']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

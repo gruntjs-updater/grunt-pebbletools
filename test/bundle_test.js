@@ -7,7 +7,7 @@ var pebble = require("pebble-shared-node").pebble;
 var PebbleDataSourceImpl_Json = require("pebble-object-json").PebbleDataSourceImpl_Json;
 
 var topDir = process.cwd();
-var inPeb, outPeb;
+var outPeb;
 
 pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 /*
@@ -30,22 +30,13 @@ pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
     test.ifError(value)
 */
 
-exports.bundle_pebble_test = {
+
+exports.bundle_tests = {
   setUp: function(done) {
-    //var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
-    //inPeb = new pebble.Pebble(inFile);
     var outFile = grunt.file.read('tmp/appstack_bundle.json', {encoding:'utf8'});
     outPeb = new pebble.Pebble(outFile);
     done();
   },
-  //hasFiles: function(test) {
-    //test.expect(2);
-
-    //test.ok(inPeb, 'tmp/standard.json must exist');
-    //test.ok(outPeb, 'tmp/standard_bundle.json must exist');
-
-    //test.done();
-  //},
 
   hasClientCode: function(test) {
 
@@ -122,7 +113,7 @@ exports.bundle_pebble_test = {
     var recs = outPeb.getRecords(path);
     recs.forEach(function(peb) {
       if (peb.get('template') != null) {
-        test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
+        test.ok(grunt.file.read(peb.getValue('templatePath'), {encodeing:'utf8'}), 'should have file in templatePath');
       }
       if (peb.get('code') != null) {
         test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
@@ -150,3 +141,5 @@ exports.bundle_pebble_test = {
   }
 
 };
+
+

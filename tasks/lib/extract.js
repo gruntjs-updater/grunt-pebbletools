@@ -78,25 +78,120 @@ function processPebbleControls(tables, controls, data) {
   }
 }
 
-function processControls(controls, data) {
-  //pebbleControls
-  console.log('\n----- pebbleControls -----');
+function processOtherOtherFiles(otherFiles, data) {
+  //otherFiles
+  console.log('\n----- otherFiles -----');
+  var otherFiles = otherFiles.getRecords('.');
+  for (var i = 0; i < otherFiles.length; i++) {
+    var otherFile = otherFiles[i];
+    grunt.file.write(otherFile.getValue('path'), otherFile.getValue('contents'), {encoding: 'utf8'});
+  }
+}
+function processOtherControls(controls, data) {
+  //templates
+  console.log('\n----- templates -----');
   var controls = controls.getRecords('.');
   for (var i = 0; i < controls.length; i++) {
     var control = controls[i];
-    var devCode = control.get('devCode');
+    var devCode = control.getValue('code');
     if (devCode) {
-      writeFile(devCode, '.', data.projectPath + '/frontend/src/controls', 'js');
+      grunt.file.write(control.getValue('codePath'), control.getValue('code'), {encoding: 'utf8'});
     }
-    var testCode = control.get('testCode');
+    var testCode = control.getValue('testCode');
     if (testCode) {
-      writeFile(testCode, '.', data.projectPath + '/frontend/test/controls', 'js');
+      grunt.file.write(control.getValue('testCodePath'), control.getValue('testCode'), {encoding: 'utf8'});
     }
     
     var template = control.getValue('template');
     if (template) {
-      writeFile(control, 'template', data.projectPath + '/frontend/templates', 'hbs');
+      grunt.file.write(control.getValue('templatePath'), control.getValue('template'), {encoding: 'utf8'});
     } 
+  }
+}
+
+function processOtherAppInstance(appInstances, data) {
+
+  var theInstance = appInstances.get('theInstance');
+
+  //clientFiles
+  console.log('\n----- clientFiles -----');
+  var clientScripts = theInstance.getRecords('clientScripts');
+  if (clientScripts.length > 0) {
+    for (var i = 0; i < clientScripts.length; i++) {
+      var clientScript = clientScripts[i];
+      grunt.file.write(clientScript.getValue('codePath'), clientScript.getValue('devCode'), {encoding: 'utf8'});
+
+      var testCode = clientScript.get('testCode');
+      if (testCode) {
+        grunt.file.write(clientScript.getValue('testCodePath'), clientScript.getValue('testCode'), {encoding: 'utf8'});
+      }
+    }
+    theInstance.remove('clientScripts');
+  }
+
+  //serverFiles
+  console.log('\n----- serverFiles -----');
+  var serverScripts = theInstance.getRecords('serverScripts');
+  if (serverScripts.length > 0) {
+    for (var i = 0; i < serverScripts.length; i++) {
+      var serverScript = serverScripts[i];
+      grunt.file.write(serverScript.getValue('codePath'), serverScript.getValue('devCode'), {encoding: 'utf8'});
+
+      var testCode = serverScript.get('testCode');
+      if (testCode) {
+        grunt.file.write(serverScript.getValue('testCodePath'), serverScript.getValue('testCode'), {encoding: 'utf8'});
+      }
+    }
+    theInstance.remove('serverScripts');
+  }
+
+  //cssTemplates (take both css and less children)
+  console.log('\n----- cssTemplates -----');
+  var cssTemplates = theInstance.getRecords('cssTemplates');
+  if (cssTemplates.length > 0) {
+    for (var i = 0; i < cssTemplates.length; i++) {
+      var cssTemplate = cssTemplates[i];
+      writeFile(cssTemplate, 'css', data.projectPath + '/frontend/cssTemplates', 'css');
+      var less = cssTemplate.getRecords('less');
+      for (var j = 0; j < less.length; j++) {
+        //writeFile(less[j], '.', data.projectPath + '/frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
+      }
+    }
+    theInstance.remove('cssTemplates');
+  }
+
+  //stringMaps
+  console.log('\n----- stringMaps -----');
+  var stringMaps = theInstance.getRecords('stringMaps');
+  if (stringMaps.length > 0) {
+    for (var i = 0; i < stringMaps.length; i++) {
+      var stringMap = stringMaps[i];
+      writeFile(stringMap, '.', data.projectPath + '/frontend/stringMaps', 'xml', true);
+      var strings = stringMap.getRecords('.');
+      strings.forEach(function(string) {
+        //grunt.file.write(data.projectPath + '/frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
+      });
+    }
+    theInstance.remove('stringMaps');
+  }
+
+  //accessPoints
+  console.log('\n----- accessPoints -----');
+  var accessPoints = theInstance.getRecords('deployment.accessPoints');
+  if (accessPoints.length > 0) {
+    for (var i = 0; i < accessPoints.length; i++) {
+      var accessPoint = accessPoints[i];
+      var accessPointsPath = p.join(data.projectPath, '/frontend/accessPoints', accessPoint.getTagName());
+      var config = accessPoint.getValue('config');
+      if (config) {
+        grunt.file.write(accessPoint.getValue('configPath'), accessPoint.getValue('config'), {encoding: 'utf8'});
+      }
+      var view = accessPoint.getValue('htmlpage');
+      if (view) {
+        grunt.file.write(accessPoint.getValue('viewPath'), accessPoint.getValue('htmlpage'), {encoding: 'utf8'});
+      }
+    }
+    theInstance.remove('deployment.accessPoints');
   }
 }
 
@@ -269,15 +364,15 @@ function extractOtherProject(gruntRef, data) {
 
     switch (tableName) {
       case 'theModel_appInstances':
-        processAppInstance(table, data);
+        processOtherAppInstance(table, data);
       break;
 
       case 'theModel_controls':
-        processControls(table, data);
+        processOtherControls(table, data);
       break;
 
       case 'theModel_otherFiles':
-        processOtherFiles(table, data);
+        processOtherOtherFiles(table, data);
       break;
 
       default:
