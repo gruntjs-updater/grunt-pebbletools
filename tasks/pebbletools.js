@@ -5,7 +5,7 @@ var setup = require('./lib/setup');
 var compile = require('./lib/compile');
 var prettyData = require('./lib/prettyData');
 var conversion = require('./lib/conversion');
-var conversion = require('./lib/buildStatic');
+var buildStatic = require('./lib/buildStatic');
 
 'use strict';
 
