@@ -1,7 +1,7 @@
 {
   "name": "grunt-pebbletools",
   "description": "tools for pebble applications",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "homepage": "",
   "author": {
     "name": "rtsunoda",
@@ -30,6 +30,7 @@
     "pebble-object-xmldom": "*",
 		"pebble-object-json": "*",
 		"pebble-shared-node": "*",
+		"pebble-utils": "*",
     "less": "*",
     "pretty-data": "*"
   },
