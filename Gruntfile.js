@@ -64,6 +64,11 @@ module.exports = function(grunt) {
         viewFiles: ['tmp/views/*.html'],
         otherFiles: ['tmp/app.js', 'tmp/bower.json', 'tmp/Gruntfile.js', 'tmp/package.json', 'tmp/README.md', 'tmp/grunt-tasks/**/*.js'] 
       },
+      buildStatic: {
+        configsPath: 'tmp/config',
+        viewsPath: 'tmp/views',
+        outputPath: 'tmp/output'
+      }
     },
     // Unit tests.
     nodeunit: {

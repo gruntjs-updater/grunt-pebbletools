@@ -5,6 +5,7 @@ var setup = require('./lib/setup');
 var compile = require('./lib/compile');
 var prettyData = require('./lib/prettyData');
 var conversion = require('./lib/conversion');
+var conversion = require('./lib/buildStatic');
 
 'use strict';
 
@@ -52,6 +53,9 @@ module.exports = function(grunt) {
 					break;
 				case 'changeSpec':
 					changeSpec(grunt, this.data);
+					break;
+				case 'buildStatic':
+					buildStatic(grunt, this.data);
 					break;
 			}
       grunt.log.writeln('');
