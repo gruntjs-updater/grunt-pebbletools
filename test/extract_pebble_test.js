@@ -29,53 +29,53 @@ exports.pebble = {
   hasInstance: function(test) {
     test.expect(1);
 
-    test.ok(grunt.file.read('tmp/theInstance.xml'), 'should have extracted theInstance');
+    test.ok(grunt.file.read('theInstance.xml'), 'should have extracted theInstance');
 
     test.done();
   },
 
   hasAccessPoints: function(test) {
 
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/testAppControl.xml'), 'accessPoint');
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/topControl.xml'), 'accessPoint/topControl');
-    test.ok(grunt.file.read('tmp/frontend/accessPoints/testAppControl/config.json'), 'accessPoint/config');
+    test.ok(grunt.file.read('frontend/accessPoints/testAppControl/testAppControl.xml'), 'accessPoint');
+    test.ok(grunt.file.read('frontend/accessPoints/testAppControl/topControl.xml'), 'accessPoint/topControl');
+    test.ok(grunt.file.read('frontend/accessPoints/testAppControl/config.json'), 'accessPoint/config');
 
     test.done();
   },
 
   hasControls: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/controls/ClientControl/ClientControl.xml'), 'controls/ClientControl');
-    test.ok(grunt.file.read('tmp/frontend/controls/ClientControl/functions/getData.xml'), 'controls/functions/getData');
+    test.ok(grunt.file.read('frontend/controls/ClientControl/ClientControl.xml'), 'controls/ClientControl');
+    test.ok(grunt.file.read('frontend/controls/ClientControl/functions/getData.xml'), 'controls/functions/getData');
     test.done();
   },
 
   hasCssTemplates: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/cssTemplates/standard.css'), 'cssTemplates/standard.css');
+    test.ok(grunt.file.read('frontend/cssTemplates/standard.css'), 'cssTemplates/standard.css');
     test.done();
   },
 
   hasClientScripts: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/src/testServer.js'), 'src/testServer.js');
+    test.ok(grunt.file.read('frontend/src/testServer.js'), 'src/testServer.js');
     test.done();
   },
 
   hasClientTests: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/test/controls/ArrayTreeBase.js'), 'test/ArrayTreeBase.js');
+    test.ok(grunt.file.read('frontend/test/controls/ArrayTreeBase.js'), 'test/ArrayTreeBase.js');
     test.done();
   },
 
   hasTypes: function(test) {
-    test.ok(grunt.file.read('tmp/frontend/types/text.xml'), 'types/text.xml');
+    test.ok(grunt.file.read('frontend/types/text.xml'), 'types/text.xml');
     test.done();
   },
 
   hasServerServices: function(test) {
-    test.ok(grunt.file.read('tmp/server/services/doInit.xml'), 'server/services/doInit.xml');
+    test.ok(grunt.file.read('server/services/doInit.xml'), 'server/services/doInit.xml');
     test.done();
   },
 
   hasServerScripts: function(test) {
-    //test.ok(grunt.file.read('tmp/server/src/a0.js'), 'server/src/a0.js');
+    //test.ok(grunt.file.read('server/src/a0.js'), 'server/src/a0.js');
     test.done();
   }
 };

@@ -19,10 +19,10 @@ function json2xml(pebJson) {
 function processOtherFiles(otherFiles, data) {
   //otherFiles
   console.log('\n----- otherFiles -----');
-  var otherFiles = otherFiles.getRecords('.');
-  for (var i = 0; i < otherFiles.length; i++) {
-    writeFile(otherFiles[i], data.projectPath + '/contents', '.');
-  }
+  //var otherFiles = otherFiles.getRecords('.');
+  //for (var i = 0; i < otherFiles.length; i++) {
+    //writeFile(otherFiles[i], 'contents', '.');
+  //}
 }
 function processServices(services, data) {
   //services
@@ -30,7 +30,7 @@ function processServices(services, data) {
   var services = services.getRecords('.');
   for (var i = 0; i < services.length; i++) {
     var service = services[i];
-    writeFile(service, '.', data.projectPath + '/server/services', 'xml', true);
+    writeFile(service, '.', 'server/services', 'xml', true);
   }
 }
 function processTypes(types, data) {
@@ -39,7 +39,7 @@ function processTypes(types, data) {
   var types = types.getRecords('.');
   for (var i = 0; i < types.length; i++) {
     var type = types[i];
-    writeFile(type, '.', data.projectPath + '/frontend/types', 'xml', true);
+    writeFile(type, '.', 'frontend/types', 'xml', true);
   }
 }
 
@@ -52,12 +52,12 @@ function processPebbleControls(tables, controls, data) {
     var controlName = control.getTagName();
     var devCode = control.get('code');
     if (devCode) {
-      writeFile(control, 'code', data.projectPath + '/frontend/src/controls', 'js');
+      writeFile(control, 'code', 'frontend/src/controls', 'js');
       control.remove('code');
     }
     var testCode = control.get('testCode');
     if (testCode) {
-      writeFile(control, 'testCode', data.projectPath + '/frontend/test/controls', 'js');
+      writeFile(control, 'testCode', 'frontend/test/controls', 'js');
       control.remove('testCode');
     }
 
@@ -69,12 +69,12 @@ function processPebbleControls(tables, controls, data) {
         var funcs = table.getRecords('.');
         for (var i = 0; i < funcs.length; i++) {
           var func = funcs[i];
-          writeFile(func, '.', data.projectPath + '/frontend/controls/' + controlName + '/functions', 'xml', true);
+          writeFile(func, '.', 'frontend/controls/' + controlName + '/functions', 'xml', true);
         }
       }
     });
 
-    grunt.file.write(data.projectPath + '/frontend/controls/' + controlName + '/' + controlName + '.xml', json2xml(control.impl.xml), {encoding: 'utf8'});
+    grunt.file.write('frontend/controls/' + controlName + '/' + controlName + '.xml', json2xml(control.impl.xml), {encoding: 'utf8'});
   }
 }
 
@@ -151,10 +151,10 @@ function processOtherAppInstance(appInstances, data) {
   if (cssTemplates.length > 0) {
     for (var i = 0; i < cssTemplates.length; i++) {
       var cssTemplate = cssTemplates[i];
-      writeFile(cssTemplate, 'css', data.projectPath + '/frontend/cssTemplates', 'css');
+      writeFile(cssTemplate, 'css', 'frontend/cssTemplates', 'css');
       var less = cssTemplate.getRecords('less');
       for (var j = 0; j < less.length; j++) {
-        //writeFile(less[j], '.', data.projectPath + '/frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
+        //writeFile(less[j], '.', 'frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
       }
     }
     theInstance.remove('cssTemplates');
@@ -166,10 +166,10 @@ function processOtherAppInstance(appInstances, data) {
   if (stringMaps.length > 0) {
     for (var i = 0; i < stringMaps.length; i++) {
       var stringMap = stringMaps[i];
-      writeFile(stringMap, '.', data.projectPath + '/frontend/stringMaps', 'xml', true);
+      writeFile(stringMap, '.', 'frontend/stringMaps', 'xml', true);
       var strings = stringMap.getRecords('.');
       strings.forEach(function(string) {
-        //grunt.file.write(data.projectPath + '/frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
+        //grunt.file.write('frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
       });
     }
     theInstance.remove('stringMaps');
@@ -181,7 +181,7 @@ function processOtherAppInstance(appInstances, data) {
   if (accessPoints.length > 0) {
     for (var i = 0; i < accessPoints.length; i++) {
       var accessPoint = accessPoints[i];
-      var accessPointsPath = p.join(data.projectPath, '/frontend/accessPoints', accessPoint.getTagName());
+      var accessPointsPath = p.join('frontend/accessPoints', accessPoint.getTagName());
       var config = accessPoint.getValue('config');
       if (config) {
         grunt.file.write(accessPoint.getValue('configPath'), accessPoint.getValue('config'), {encoding: 'utf8'});
@@ -205,11 +205,11 @@ function processAppInstance(appInstances, data) {
   if (clientScripts.length > 0) {
     for (var i = 0; i < clientScripts.length; i++) {
       var clientScript = clientScripts[i];
-      writeFile(clientScript, 'devCode', data.projectPath + '/frontend/src', 'js');
+      writeFile(clientScript, 'devCode', 'frontend/src', 'js');
 
       var testCode = clientScript.get('testCode');
       if (testCode) {
-        writeFile(testCode, '.', data.projectPath + '/frontend/test', 'js');
+        writeFile(testCode, '.', 'frontend/test', 'js');
       }
     }
     theInstance.remove('clientScripts');
@@ -221,11 +221,11 @@ function processAppInstance(appInstances, data) {
   if (serverScripts.length > 0) {
     for (var i = 0; i < serverScripts.length; i++) {
       var serverScript = serverScripts[i];
-      writeFile(serverScript, 'devCode', data.projectPath + '/server/src', 'js');
+      writeFile(serverScript, 'devCode', 'server/src', 'js');
 
       var testCode = serverScript.get('testCode');
       if (testCode) {
-        writeFile(testCode, '.', data.projectPath + '/server/test', 'js');
+        writeFile(testCode, '.', 'server/test', 'js');
       }
     }
     theInstance.remove('serverScripts');
@@ -237,10 +237,10 @@ function processAppInstance(appInstances, data) {
   if (cssTemplates.length > 0) {
     for (var i = 0; i < cssTemplates.length; i++) {
       var cssTemplate = cssTemplates[i];
-      writeFile(cssTemplate, 'css', data.projectPath + '/frontend/cssTemplates', 'css');
+      writeFile(cssTemplate, 'css', 'frontend/cssTemplates', 'css');
       var less = cssTemplate.getRecords('less');
       for (var j = 0; j < less.length; j++) {
-        writeFile(less[j], '.', data.projectPath + '/frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
+        writeFile(less[j], '.', 'frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
       }
     }
     theInstance.remove('cssTemplates');
@@ -252,10 +252,10 @@ function processAppInstance(appInstances, data) {
   if (stringMaps.length > 0) {
     for (var i = 0; i < stringMaps.length; i++) {
       var stringMap = stringMaps[i];
-      writeFile(stringMap, '.', data.projectPath + '/frontend/stringMaps', 'xml', true);
+      writeFile(stringMap, '.', 'frontend/stringMaps', 'xml', true);
       var strings = stringMap.getRecords('.');
       strings.forEach(function(string) {
-        grunt.file.write(data.projectPath + '/frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
+        grunt.file.write('frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
       });
     }
     theInstance.remove('stringMaps');
@@ -267,7 +267,7 @@ function processAppInstance(appInstances, data) {
   if (accessPoints.length > 0) {
     for (var i = 0; i < accessPoints.length; i++) {
       var accessPoint = accessPoints[i];
-      var accessPointsPath = p.join(data.projectPath, '/frontend/accessPoints', accessPoint.getTagName());
+      var accessPointsPath = p.join('frontend/accessPoints', accessPoint.getTagName());
       var config = accessPoint.getValue('config');
       if (config) {
         grunt.file.write(accessPointsPath + '/config.json', config, {encoding: 'utf8'});
@@ -286,7 +286,7 @@ function processAppInstance(appInstances, data) {
   }
 
   //description, actorGroups, deployment.theControlApp
-  grunt.file.write(data.projectPath + '/theInstance.xml', json2xml(theInstance.impl.xml), {encoding: 'utf8'});
+  grunt.file.write('theInstance.xml', json2xml(theInstance.impl.xml), {encoding: 'utf8'});
 }
 
 function writeFile(peb, contentsPath, defaultPath, defaultExt, isPebbleControl) {

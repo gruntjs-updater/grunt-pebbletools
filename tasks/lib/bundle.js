@@ -44,7 +44,6 @@ function setLibDoc(lib, file, setInDocPath, setInLibPath, pathPath, isPebbleCont
     }
     doc.setValue(pathPath, file);
     doc.setValue('ext', ext);
-    lib.set(setInLibPath + '.' + name, doc);
   }
 }
 
@@ -192,16 +191,16 @@ function bundlePebbleProject(gruntRef, data) {
   
   grunt = gruntRef;
  
-  if (data.projectPath) {
-    basePath = p.join(process.cwd(), data.projectPath);
-  } else {
-    basePath = process.cwd();
-  }
+  basePath = process.cwd();
 
   //build deployment
   pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
   var instancePath = 'theModel_appInstances.theInstance'; 
   var fileName = data.outputFile || 'compressed.json';
+  //get rid of directory paths
+  if (fileName.indexOf('/') !== -1) {
+    fileName = fileName.split('/').pop();
+  }
   var lib = new pebble.Pebble(fileName.split('.')[0]);
 
   //main configPath
@@ -212,11 +211,11 @@ function bundlePebbleProject(gruntRef, data) {
   //------ appInstance start
   //clientFiles
   console.log('\n----- clientFiles -----');
-  compressGlob([data.projectPath + '/frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
+  compressGlob(['frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
   
   //clientTestFiles
   console.log('\n----- clientTestFiles -----');
-  compressGlob([data.projectPath + '/frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
+  compressGlob(['frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
 
   //accessPoints
   console.log('\n----- accessPoints -----');
@@ -232,11 +231,11 @@ function bundlePebbleProject(gruntRef, data) {
 
   //serverFiles
   console.log('\n----- serverFiles -----');
-  compressGlob([data.projectPath + '/server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
+  compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
 
   //serverTestFiles
   console.log('\n----- serverTestFiles -----');
-  compressGlob([data.projectPath + '/server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
+  compressGlob(['server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
   //------ appInstance end
 
   //templatefiles
@@ -245,19 +244,19 @@ function bundlePebbleProject(gruntRef, data) {
 
   //templateCodeFiles
   console.log('\n----- templateCodeFiles -----');
-  compressGlob([data.projectPath + '/frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
+  compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
 
   //templateTestFiles
   console.log('\n----- templateTestFiles -----');
-  compressGlob([data.projectPath + '/frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
+  compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
 
   //types
   console.log('\n----- types -----');
-  compressGlob([data.projectPath + '/frontend/types/*.xml'], lib, '.', 'theModel_types', 'path', true);
+  compressGlob(['frontend/types/*.xml'], lib, '.', 'theModel_types', 'path', true);
   
   //services
   console.log('\n----- services -----');
-  compressGlob([data.projectPath + '/server/services/*.xml'], lib, '.', 'theModel_services', 'path', true);
+  compressGlob(['server/services/*.xml'], lib, '.', 'theModel_services', 'path', true);
   
   fs.writeFileSync(data.outputFile || 'compressed.json', lib.toString(), 'utf8');
 }
@@ -266,11 +265,7 @@ function bundleOtherProject(gruntRef, data) {
 
   grunt = gruntRef;
 
-  if (data.projectPath) {
-    basePath = p.join(process.cwd(), data.projectPath);
-  } else {
-    basePath = process.cwd();
-  }
+  basePath = process.cwd();
 
   //build deployment
   pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());

@@ -34,15 +34,15 @@ exports.bundle_pebble_test = {
   setUp: function(done) {
     var inFile = grunt.file.read('test/fixtures/standard.json', {encoding:'utf8'});
     inPeb = new pebble.Pebble(inFile);
-    var outFile = grunt.file.read('tmp/standard_bundle.json', {encoding:'utf8'});
+    var outFile = grunt.file.read('standard_bundle.json', {encoding:'utf8'});
     outPeb = new pebble.Pebble(outFile);
     done();
   },
   hasFiles: function(test) {
     test.expect(2);
 
-    test.ok(inPeb, 'tmp/standard.json must exist');
-    test.ok(outPeb, 'tmp/standard_bundle.json must exist');
+    test.ok(inPeb, 'standard.json must exist');
+    test.ok(outPeb, 'standard_bundle.json must exist');
 
     test.done();
   },
@@ -51,7 +51,7 @@ exports.bundle_pebble_test = {
     test.expect(4);
 
     var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
-    var files = fs.readdirSync('tmp/frontend/accessPoints');
+    var files = fs.readdirSync('frontend/accessPoints');
     test.equal(outPeb.getRecords(accessPointsPath).length, files.length);
 
     var testAppControl = outPeb.get(accessPointsPath + '.testAppControl');
@@ -66,7 +66,7 @@ exports.bundle_pebble_test = {
     test.expect(1);
 
     var tablePath = 'theModel_appInstances.theInstance.clientScripts';
-    var tmpControlsPath = 'tmp/frontend/src';
+    var tmpControlsPath = 'frontend/src';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
 
@@ -77,7 +77,7 @@ exports.bundle_pebble_test = {
     test.expect(1);
 
     var tablePath = 'theModel_appInstances.theInstance.serverScripts';
-    var tmpControlsPath = 'tmp/server/src';
+    var tmpControlsPath = 'server/src';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
 
@@ -88,7 +88,7 @@ exports.bundle_pebble_test = {
     test.expect(1);
 
     var tablePath = 'theModel_appInstances.theInstance.cssTemplates';
-    var tmpControlsPath = 'tmp/frontend/cssTemplates';
+    var tmpControlsPath = 'frontend/cssTemplates';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of templates');
 
@@ -99,7 +99,7 @@ exports.bundle_pebble_test = {
     //test.expect(1);
 
     var tablePath = 'theModel_controls';
-    var tmpControlsPath = 'tmp/frontend/controls';
+    var tmpControlsPath = 'frontend/controls';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length);
 
@@ -123,7 +123,7 @@ exports.bundle_pebble_test = {
     test.expect(1);
 
     var tablePath = 'theModel_services';
-    var tmpControlsPath = 'tmp/server/services';
+    var tmpControlsPath = 'server/services';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length);
 
@@ -134,7 +134,7 @@ exports.bundle_pebble_test = {
     test.expect(1);
 
     var tablePath = 'theModel_types';
-    var tmpControlsPath = 'tmp/frontend/types';
+    var tmpControlsPath = 'frontend/types';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length);
 

@@ -24,50 +24,55 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      tests: ['tmp']
+      tests: ['frontend', 'server', 'theInstance.xml', 'standard_bundle.json',
+      'config', 'views', 'appstack_bundle.json']
     },
 
     // Configuration to be run (and then tested).
     pebbletools: {
       extractPebble:{
-        projectPath: 'tmp',
         appPath: 'test/fixtures/standard.json'
       },
       bundlePebble: {
-        outputFile : 'tmp/standard_bundle.json',
-        projectPath: 'tmp'
+        outputFile : 'standard_bundle.json',
       },
       extract:{
-        projectPath: 'tmp',
         appPath: 'test/fixtures/appstack.json'
       },
       bundle: {
-        outputFile : 'tmp/appstack_bundle.json',
-        projectPath: 'tmp',
+        outputFile : 'appstack_bundle.json',
         clientFiles: [
-          'tmp/frontend/scenarios/components/*.js', 'tmp/frontend/scenarios/controllers/*.js', 'tmp/frontend/scenarios/models/*.js', 'tmp/frontend/scenarios/routes/**/*.js',
-          'tmp/frontend/sessions/collections/*.js', 'tmp/frontend/sessions/models/*.js', 'tmp/frontend/sessions/router.js' 
+          'frontend/scenarios/components/*.js', 'frontend/scenarios/controllers/*.js', 'frontend/scenarios/models/*.js', 'frontend/scenarios/routes/**/*.js',
+          'frontend/sessions/collections/*.js', 'frontend/sessions/models/*.js', 'frontend/sessions/router.js' 
         ],
         clientTestFiles: [ ],
         cssTemplates: null,
         serverFiles: [ ],
         serverTestFiles: [ ],
         templateFiles: [
-          'tmp/frontend/scenarios/templates/**/*.hbs',
-          'tmp/frontend/sessions/templates/*.html'
+          'frontend/scenarios/templates/**/*.hbs',
+          'frontend/sessions/templates/*.html'
         ],
         templateCodeFiles: [
-          'tmp/frontend/sessions/views/*.js'
+          'frontend/sessions/views/*.js'
         ],
         templateTestFiles: [ ],
-        accessPoints: ['tmp/config/*.json'],
-        viewFiles: ['tmp/views/*.html'],
-        otherFiles: ['tmp/app.js', 'tmp/bower.json', 'tmp/Gruntfile.js', 'tmp/package.json', 'tmp/README.md', 'tmp/grunt-tasks/**/*.js'] 
+        accessPoints: ['config/*.json'],
+        viewFiles: ['views/*.html'],
+        //otherFiles: ['app.js', 'bower.json', 'Gruntfile.js', 'package.json', 'README.md', 'grunt-tasks/**/*.js'] 
       },
       buildStatic: {
-        configsPath: 'tmp/config',
-        viewsPath: 'tmp/views',
-        outputPath: 'tmp/output'
+        configsPath: 'config',
+        viewsPath: 'views',
+        outputPath: 'output'
+      },
+      json2xml: {
+        input: 'standard_bundle.json',
+        output: 'standard_bundle.xml'
+      },
+      xml2json: {
+        input: 'standard_bundle.xml',
+        output: 'standard_bundle.json'
       }
     },
     // Unit tests.

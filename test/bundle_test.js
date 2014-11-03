@@ -33,7 +33,7 @@ pebble.Pebble.setDataSourceFactory(new PebbleDataSourceImpl_Json());
 
 exports.bundle_tests = {
   setUp: function(done) {
-    var outFile = grunt.file.read('tmp/appstack_bundle.json', {encoding:'utf8'});
+    var outFile = grunt.file.read('appstack_bundle.json', {encoding:'utf8'});
     outPeb = new pebble.Pebble(outFile);
     done();
   },
@@ -126,19 +126,19 @@ exports.bundle_tests = {
     test.done();
   },
   
-  hasOtherFiles: function(test) {
+  //hasOtherFiles: function(test) {
 
-    var path = 'theModel_otherFiles';
+    //var path = 'theModel_otherFiles';
 
-    var recs = outPeb.getRecords(path);
-    recs.forEach(function(peb) {
-      if (peb.get('contents') != null) {
-        test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
-      }
-    });
+    //var recs = outPeb.getRecords(path);
+    //recs.forEach(function(peb) {
+      //if (peb.get('contents') != null) {
+        //test.ok(grunt.file.read(peb.getValue('path'), {encodeing:'utf8'}), 'should have file in path');
+      //}
+    //});
 
-    test.done();
-  }
+    //test.done();
+  //}
 
 };
 
