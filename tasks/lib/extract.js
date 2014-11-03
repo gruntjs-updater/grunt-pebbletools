@@ -276,7 +276,7 @@ function processAppInstance(appInstances, data) {
       var topControl = accessPoint.get('topControl');
       if (topControl) {
         grunt.file.write(accessPointsPath + '/topControl.xml', json2xml(topControl.impl.xml), {encoding: 'utf8'});
-        accessPoint.remove('config');
+        accessPoint.remove('topControl');
       }
       if (accessPoint.getRecords('.').length > 0) {
         writeFile(accessPoint, '.', accessPointsPath, 'xml', true);
