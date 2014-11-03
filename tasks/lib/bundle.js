@@ -83,27 +83,6 @@ function compressPebbleControls(controlsPath, lib, setInLibPath) {
   }
 }
 
-function getFiles(baseDir, config, files, excludePatt) {
-  if (config.imports) {
-    for (var i = 0; i < config.imports.length; i++) {
-      var importLibName = config.imports[i];
-      var importLibPath = p.join(baseDir, importLibName);
-      var importLibDir = importLibPath.substring(0, importLibPath.lastIndexOf('/'));
-      var s = fs.readFileSync(importLibPath);
-      var importLib = JSON.parse(s.toString());
-      files = getFiles(importLibDir, importLib, files, excludePatt);
-    }
-  }
-  for (var k = 0; k < config.files.length; k++) {
-    var file = config.files[k];
-
-    if (!excludePatt || !file.match(excludePatt)) {
-      var absPath = p.join(baseDir, config.basePath, file);
-      files.push(absPath.replace(process.cwd() + '/', ''));
-    }
-  }
-  return files;
-}
 function compressAccessPoints(accessPointsPath, lib, setInLibPath) {
 
   var path = p.join(basePath, accessPointsPath);
