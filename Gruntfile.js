@@ -24,8 +24,8 @@ module.exports = function(grunt) {
     },
 
     clean: {
-      tests: ['frontend', 'server', 'theInstance.xml', 'standard_bundle.json',
-      'config', 'views', 'appstack_bundle.json']
+      tests: ['frontend', 'server', 'theInstance.xml', 'standard_bundle.json', 'pebble.json',
+      'config', 'views', 'appstack_bundle.json', 'config.json']
     },
 
     // Configuration to be run (and then tested).

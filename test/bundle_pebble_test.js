@@ -47,6 +47,15 @@ exports.bundle_pebble_test = {
     test.done();
   },
 
+  hasMainConfig: function(test) {
+    test.expect(1);
+
+    var mainConfig = outPeb.get('theModel_appInstances.theInstance.mainConfig');
+    test.ok(mainConfig, 'should have pebble.json');
+
+    test.done();
+  },
+
   hasAccessPoints: function(test) {
     test.expect(4);
 
@@ -63,12 +72,13 @@ exports.bundle_pebble_test = {
   },
 
   hasClientScripts: function(test) {
-    test.expect(1);
 
     var tablePath = 'theModel_appInstances.theInstance.clientScripts';
     var tmpControlsPath = 'frontend/src';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+    if (fs.existsSync(tmpControlsPath)) {
+      var files = fs.readdirSync(tmpControlsPath);
+      test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+    }
 
     test.done();
   },

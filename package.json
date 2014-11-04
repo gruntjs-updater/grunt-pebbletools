@@ -1,7 +1,7 @@
 {
   "name": "grunt-pebbletools",
   "description": "tools for pebble applications",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "homepage": "",
   "author": {
     "name": "rtsunoda",

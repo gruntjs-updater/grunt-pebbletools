@@ -229,6 +229,13 @@ function bundlePebbleProject(gruntRef, data) {
   console.log('\n----- stringMaps -----');
   processStringMaps('frontend/stringMaps', lib, instancePath + '.stringMaps');
 
+  //pebble.json
+  console.log('\n----- pebble.json -----');
+  if (fs.existsSync('pebble.json')) {
+    var mainConfig = fs.readFileSync('pebble.json', 'utf8');
+    lib.setMarkup(instancePath + '.mainConfig', mainConfig);
+  }
+
   //serverFiles
   console.log('\n----- serverFiles -----');
   compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
@@ -304,6 +311,13 @@ function bundleOtherProject(gruntRef, data) {
   //stringMaps
   console.log('\n----- stringMaps -----');
   processStringMaps(data.stringMaps, lib, instancePath + '.stringMaps');
+
+  //mainConfig
+  console.log('\n----- mainConfig -----');
+  if (data.configPath) {
+    var mainConfig = fs.readFileSync(data.configPath, 'utf8');
+    lib.setMarkup(instancePath + '.mainConfig', mainConfig);
+  }
 
   //serverFiles
   console.log('\n----- serverFiles -----');

@@ -113,7 +113,6 @@ function processOtherAppInstance(appInstances, data) {
 
   var theInstance = appInstances.get('theInstance');
 
-  //clientFiles
   console.log('\n----- clientFiles -----');
   var clientScripts = theInstance.getRecords('clientScripts');
   if (clientScripts.length > 0) {
@@ -129,7 +128,6 @@ function processOtherAppInstance(appInstances, data) {
     theInstance.remove('clientScripts');
   }
 
-  //serverFiles
   console.log('\n----- serverFiles -----');
   var serverScripts = theInstance.getRecords('serverScripts');
   if (serverScripts.length > 0) {
@@ -145,7 +143,6 @@ function processOtherAppInstance(appInstances, data) {
     theInstance.remove('serverScripts');
   }
 
-  //cssTemplates (take both css and less children)
   console.log('\n----- cssTemplates -----');
   var cssTemplates = theInstance.getRecords('cssTemplates');
   if (cssTemplates.length > 0) {
@@ -160,7 +157,6 @@ function processOtherAppInstance(appInstances, data) {
     theInstance.remove('cssTemplates');
   }
 
-  //stringMaps
   console.log('\n----- stringMaps -----');
   var stringMaps = theInstance.getRecords('stringMaps');
   if (stringMaps.length > 0) {
@@ -175,7 +171,6 @@ function processOtherAppInstance(appInstances, data) {
     theInstance.remove('stringMaps');
   }
 
-  //accessPoints
   console.log('\n----- accessPoints -----');
   var accessPoints = theInstance.getRecords('deployment.accessPoints');
   if (accessPoints.length > 0) {
@@ -192,6 +187,13 @@ function processOtherAppInstance(appInstances, data) {
       }
     }
     theInstance.remove('deployment.accessPoints');
+  }
+
+  console.log('\n----- pebble.json -----');
+  var mainConfig = theInstance.get('mainConfig');
+  if (mainConfig) {
+    grunt.file.write('pebble.json', mainConfig.getValue('.'), {encoding: 'utf8'});
+    theInstance.remove('mainConfig');
   }
 }
 
@@ -283,6 +285,13 @@ function processAppInstance(appInstances, data) {
       }
     }
     theInstance.remove('deployment.accessPoints');
+  }
+  
+  console.log('\n----- pebble.json -----');
+  var mainConfig = theInstance.get('mainConfig');
+  if (mainConfig) {
+    grunt.file.write('pebble.json', mainConfig.getValue('.'), {encoding: 'utf8'});
+    theInstance.remove('mainConfig');
   }
 
   //description, actorGroups, deployment.theControlApp
