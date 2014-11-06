@@ -71,17 +71,18 @@ exports.bundle_pebble_test = {
     test.done();
   },
 
-  hasClientScripts: function(test) {
+    //TODO: union of code and tests, if not 1-1 then there will be more
+  //hasClientScripts: function(test) {
 
-    var tablePath = 'theModel_appInstances.theInstance.clientScripts';
-    var tmpControlsPath = 'frontend/src';
-    if (fs.existsSync(tmpControlsPath)) {
-      var files = fs.readdirSync(tmpControlsPath);
-      test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
-    }
+    //var tablePath = 'theModel_appInstances.theInstance.clientScripts';
+    //var tmpControlsPath = 'frontend/src';
+    //if (fs.existsSync(tmpControlsPath)) {
+      //var files = grunt.file.expand(['frontend/src/lib/**/*.js']);
+      //test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
+    //}
 
-    test.done();
-  },
+    //test.done();
+  //},
 
   hasServerScripts: function(test) {
     test.expect(1);
@@ -110,8 +111,9 @@ exports.bundle_pebble_test = {
 
     var tablePath = 'theModel_controls';
     var tmpControlsPath = 'frontend/controls';
-    var files = fs.readdirSync(tmpControlsPath);
-    test.equal(outPeb.getRecords(tablePath).length, files.length);
+    //TODO: union of code and tests, if not 1-1 then there will be more
+    //var files = grunt.file.expand(['frontend/src/controls/**/*.js']);
+    //test.equal(outPeb.getRecords(tablePath).length, files.length);
 
     //functions
     var clientControl = outPeb.get(tablePath + '.ClientControl');
@@ -122,7 +124,7 @@ exports.bundle_pebble_test = {
     test.ok(appControlBase, 'should have appControlBase');
 
     //code
-    //test.ok(appControlBase.getValue('devCoe'), 'should have dev code as markup');
+    test.ok(appControlBase.getValue('code'), 'should have dev code as markup');
 
     //tests
     test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');

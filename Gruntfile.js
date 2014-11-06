@@ -34,7 +34,8 @@ module.exports = function(grunt) {
         appPath: 'test/fixtures/standard.json'
       },
       bundlePebble: {
-        outputFile : 'standard_bundle.json',
+        outputFile: 'standard_bundle.json',
+        ignore: []
       },
       extract:{
         appPath: 'test/fixtures/appstack.json'

@@ -209,14 +209,16 @@ function bundlePebbleProject(gruntRef, data) {
   lib.set(instancePath, new pebble.Pebble(xml2json(config)));
   
   //------ appInstance start
-  //clientFiles
-  console.log('\n----- clientFiles -----');
-  compressGlob(['frontend/src/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'path');
+  if (!data.ignore || data.ignore.indexOf('clientScripts') === -1) { 
+    //clientFiles
+    console.log('\n----- clientFiles -----');
+    compressGlob(['frontend/src/lib/**/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'codePath');
+    
+    //clientTestFiles
+    console.log('\n----- clientTestFiles -----');
+    compressGlob(['frontend/test/lib/**/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'testCodePath');
+  }
   
-  //clientTestFiles
-  console.log('\n----- clientTestFiles -----');
-  compressGlob(['frontend/test/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'path');
-
   //accessPoints
   console.log('\n----- accessPoints -----');
   compressAccessPoints('frontend/accessPoints', lib, instancePath + '.deployment.accessPoints');
@@ -238,11 +240,11 @@ function bundlePebbleProject(gruntRef, data) {
 
   //serverFiles
   console.log('\n----- serverFiles -----');
-  compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'path');
+  compressGlob(['server/src/*.js'], lib, 'devCode', instancePath + '.serverScripts', 'codePath');
 
   //serverTestFiles
   console.log('\n----- serverTestFiles -----');
-  compressGlob(['server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'path');
+  compressGlob(['server/test/*.js'], lib, 'testCode', instancePath + '.serverScripts', 'testCodePath');
   //------ appInstance end
 
   //templatefiles
@@ -250,12 +252,14 @@ function bundlePebbleProject(gruntRef, data) {
   compressPebbleControls('frontend/controls', lib, 'theModel_controls');
 
   //templateCodeFiles
-  console.log('\n----- templateCodeFiles -----');
-  compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'path');
+  if (!data.ignore || data.ignore.indexOf('controlScripts') === -1) { 
+    console.log('\n----- templateCodeFiles -----');
+    compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'codePath');
 
-  //templateTestFiles
-  console.log('\n----- templateTestFiles -----');
-  compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'path');
+    //templateTestFiles
+    console.log('\n----- templateTestFiles -----');
+    compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'testCodePath');
+  }
 
   //types
   console.log('\n----- types -----');

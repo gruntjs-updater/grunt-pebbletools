@@ -68,7 +68,7 @@ function getTemplateTag(path, basePath, appType) {
 
 function getScripts (key, config){
   var s = '';
-  var paths = getFiles(key, [], config);
+  var paths = pebble.shared.Deployment.getFiles(key, [], config);
   for (var i = 0; i < paths.length; i++) {
     var file = paths[i];
     s += "<script src='/" + file + "'></script>";

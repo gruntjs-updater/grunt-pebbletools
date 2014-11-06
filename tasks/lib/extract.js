@@ -52,12 +52,14 @@ function processPebbleControls(tables, controls, data) {
     var controlName = control.getTagName();
     var devCode = control.get('code');
     if (devCode) {
-      writeFile(control, 'code', 'frontend/src/controls', 'js');
+      //writeFile(control, 'code', 'frontend/src/controls', 'js');
+      grunt.file.write(control.getValue('codePath'), control.getValue('code'), {encoding: 'utf8'});
       control.remove('code');
     }
     var testCode = control.get('testCode');
     if (testCode) {
-      writeFile(control, 'testCode', 'frontend/test/controls', 'js');
+      //writeFile(control, 'testCode', 'frontend/test/controls', 'js');
+      grunt.file.write(control.getValue('testCodePath'), control.getValue('testCode'), {encoding: 'utf8'});
       control.remove('testCode');
     }
 
@@ -207,11 +209,16 @@ function processAppInstance(appInstances, data) {
   if (clientScripts.length > 0) {
     for (var i = 0; i < clientScripts.length; i++) {
       var clientScript = clientScripts[i];
-      writeFile(clientScript, 'devCode', 'frontend/src', 'js');
+      var devCode = clientScript.get('devCode');
+      if (devCode) {
+        //writeFile(clientScript, 'devCode', 'frontend/src', 'js');
+        grunt.file.write(clientScript.getValue('codePath'), clientScript.getValue('devCode'), {encoding: 'utf8'});
+      }
 
       var testCode = clientScript.get('testCode');
       if (testCode) {
-        writeFile(testCode, '.', 'frontend/test', 'js');
+        //writeFile(testCode, '.', 'frontend/test', 'js');
+        grunt.file.write(clientScript.getValue('testCodePath'), clientScript.getValue('testCode'), {encoding: 'utf8'});
       }
     }
     theInstance.remove('clientScripts');
