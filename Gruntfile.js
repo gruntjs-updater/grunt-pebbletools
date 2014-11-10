@@ -54,10 +54,6 @@ module.exports = function(grunt) {
           'frontend/scenarios/templates/**/*.hbs',
           'frontend/sessions/templates/*.html'
         ],
-        templateCodeFiles: [
-          'frontend/sessions/views/*.js'
-        ],
-        templateTestFiles: [ ],
         accessPoints: ['config/*.json'],
         viewFiles: ['views/*.html'],
         //otherFiles: ['app.js', 'bower.json', 'Gruntfile.js', 'package.json', 'README.md', 'grunt-tasks/**/*.js'] 

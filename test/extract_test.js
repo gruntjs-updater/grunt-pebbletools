@@ -118,12 +118,6 @@ exports.pebble = {
       if (peb.get('template') != null) {
         test.ok(grunt.file.read(peb.getValue('templatePath'), {encodeing:'utf8'}), 'should have file in templatePath');
       }
-      if (peb.get('code') != null) {
-        test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
-      }
-      if (peb.get('testCode') != null) {
-        test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
-      }
     });
 
     test.done();

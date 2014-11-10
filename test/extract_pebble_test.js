@@ -45,7 +45,7 @@ exports.pebble = {
 
   hasAccessPoints: function(test) {
 
-    test.ok(grunt.file.read('frontend/accessPoints/testAppControl/testAppControl.xml'), 'accessPoint');
+    //test.ok(grunt.file.read('frontend/accessPoints/testAppControl/testAppControl.xml'), 'accessPoint'); note: if nothing in the file it wont write
     test.ok(grunt.file.read('frontend/accessPoints/testAppControl/topControl.xml'), 'accessPoint/topControl');
     test.ok(grunt.file.read('frontend/accessPoints/testAppControl/config.json'), 'accessPoint/config');
 
@@ -64,7 +64,7 @@ exports.pebble = {
   },
 
   hasClientScripts: function(test) {
-    test.ok(grunt.file.read('frontend/src/controls/ArrayTreeBase.js'), 'src/ArrayTreeBase.js');
+    test.ok(grunt.file.read('frontend/src/lib/client/controls/ArrayTreeBase.js'), 'src/ArrayTreeBase.js');
     test.done();
   },
 

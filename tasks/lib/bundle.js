@@ -212,11 +212,11 @@ function bundlePebbleProject(gruntRef, data) {
   if (!data.ignore || data.ignore.indexOf('clientScripts') === -1) { 
     //clientFiles
     console.log('\n----- clientFiles -----');
-    compressGlob(['frontend/src/lib/**/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'codePath');
+    compressGlob(['frontend/src/**/*.js'], lib, 'devCode', instancePath + '.clientScripts', 'codePath');
     
     //clientTestFiles
     console.log('\n----- clientTestFiles -----');
-    compressGlob(['frontend/test/lib/**/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'testCodePath');
+    compressGlob(['frontend/test/**/*.js'], lib, 'testCode', instancePath + '.clientScripts', 'testCodePath');
   }
   
   //accessPoints
@@ -250,16 +250,6 @@ function bundlePebbleProject(gruntRef, data) {
   //templatefiles
   console.log('\n----- controls -----');
   compressPebbleControls('frontend/controls', lib, 'theModel_controls');
-
-  //templateCodeFiles
-  if (!data.ignore || data.ignore.indexOf('controlScripts') === -1) { 
-    console.log('\n----- templateCodeFiles -----');
-    compressGlob(['frontend/src/controls/*.js'], lib, 'code', 'theModel_controls', 'codePath');
-
-    //templateTestFiles
-    console.log('\n----- templateTestFiles -----');
-    compressGlob(['frontend/test/controls/*.js'], lib, 'testCode', 'theModel_controls', 'testCodePath');
-  }
 
   //types
   console.log('\n----- types -----');
@@ -335,14 +325,6 @@ function bundleOtherProject(gruntRef, data) {
   //templateFiles
   console.log('\n----- templateFiles -----');
   compressGlob(data.templateFiles, lib, 'template', 'theModel_controls', 'templatePath');
-
-  //templateCodeFiles
-  console.log('\n----- templateCodeFiles -----');
-  compressGlob(data.templateCodeFiles, lib, 'code', 'theModel_controls', 'codePath');
-
-  //templateTestFiles
-  console.log('\n----- templateTestFiles -----');
-  compressGlob(data.templateTestFiles, lib, 'testCode', 'theModel_controls', 'testCodePath');
 
   //otherFiles
   console.log('\n----- otherFiles -----');

@@ -123,11 +123,6 @@ exports.bundle_pebble_test = {
     var appControlBase = outPeb.get(tablePath + '.AppControlBase');
     test.ok(appControlBase, 'should have appControlBase');
 
-    //code
-    test.ok(appControlBase.getValue('code'), 'should have dev code as markup');
-
-    //tests
-    test.ok(appControlBase.getValue('testCode'), 'should have test code as markup');
     test.done();
   },
 

@@ -50,19 +50,6 @@ function processPebbleControls(tables, controls, data) {
   for (var i = 0; i < controls.length; i++) {
     var control = controls[i];
     var controlName = control.getTagName();
-    var devCode = control.get('code');
-    if (devCode) {
-      //writeFile(control, 'code', 'frontend/src/controls', 'js');
-      grunt.file.write(control.getValue('codePath'), control.getValue('code'), {encoding: 'utf8'});
-      control.remove('code');
-    }
-    var testCode = control.get('testCode');
-    if (testCode) {
-      //writeFile(control, 'testCode', 'frontend/test/controls', 'js');
-      grunt.file.write(control.getValue('testCodePath'), control.getValue('testCode'), {encoding: 'utf8'});
-      control.remove('testCode');
-    }
-
     tables.forEach(function(table) {
 
       var tableName = table.getTagName(); 
@@ -95,15 +82,6 @@ function processOtherControls(controls, data) {
   var controls = controls.getRecords('.');
   for (var i = 0; i < controls.length; i++) {
     var control = controls[i];
-    var devCode = control.getValue('code');
-    if (devCode) {
-      grunt.file.write(control.getValue('codePath'), control.getValue('code'), {encoding: 'utf8'});
-    }
-    var testCode = control.getValue('testCode');
-    if (testCode) {
-      grunt.file.write(control.getValue('testCodePath'), control.getValue('testCode'), {encoding: 'utf8'});
-    }
-    
     var template = control.getValue('template');
     if (template) {
       grunt.file.write(control.getValue('templatePath'), control.getValue('template'), {encoding: 'utf8'});

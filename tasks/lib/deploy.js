@@ -54,10 +54,11 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
   var lib = workspaceDs.retrieve('theModel.libs', appName);
   
   var accessPoint = deployment.get('accessPoints.' + accessPointParam);
-  var dependencies = accessPoint.getRecords('dependencies');
-  for (var i = 0; i < dependencies.length; i++) {
-    var dep = dependencies[i];
-    var depFilePath = data.dependencies[dep.getRef('.')];
+  var accessPointConfigStr = accessPoint.getValue('config');
+  var accessPointConfig = JSON.parse(accessPointConfigStr);
+  for (var i = 0; i < accessPointConfig.dependencies.length; i++) {
+    var dep = accessPointConfig.dependencies[i];
+    var depFilePath = data.dependencies[dep.lib];
     if (depFilePath && dep !== appName) {
       var libStr = fs.readFileSync(p.join(topDir, depFilePath), 'utf-8');
       var lib = new pebble.Pebble(libStr);
