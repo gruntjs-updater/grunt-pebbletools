@@ -40,16 +40,20 @@ exports.bundle_tests = {
 
   hasClientCode: function(test) {
 
-    var path = 'theModel_appInstances.theInstance.clientScripts';
+    var path = 'theModel_clientScripts';
 
     var recs = outPeb.getRecords(path);
     recs.forEach(function(peb) {
+        console.log(peb.getTagName());
+        console.log(peb.getValue('codePath'));
+        console.log(peb.getValue('testCodePath'));
       if (peb.get('devCode') != null) {
         test.ok(grunt.file.read(peb.getValue('codePath'), {encodeing:'utf8'}), 'should have file in codePath');
       }
       if (peb.get('testCode') != null) {
         test.ok(grunt.file.read(peb.getValue('testCodePath'), {encodeing:'utf8'}), 'should have file in testCodePath');
       }
+      console.log('done');
     });
 
     test.done();
@@ -57,7 +61,7 @@ exports.bundle_tests = {
 
   hasAccessPoints: function(test) {
 
-    var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
+    var accessPointsPath = 'theModel_accessPoints';
 
     var accessPoints = outPeb.getRecords(accessPointsPath);
     accessPoints.forEach(function(accessPoint) {
@@ -74,7 +78,7 @@ exports.bundle_tests = {
 
   hasCssTemplates: function(test) {
 
-    var path = 'theModel_appInstances.theInstance.cssTemplates';
+    var path = 'theModel_cssTemplates';
 
     var recs = outPeb.getRecords(path);
     recs.forEach(function(peb) {
@@ -91,7 +95,7 @@ exports.bundle_tests = {
 
   hasServerCode: function(test) {
 
-    var path = 'theModel_appInstances.theInstance.serverScripts';
+    var path = 'theModel_serverScripts';
 
     var recs = outPeb.getRecords(path);
     recs.forEach(function(peb) {

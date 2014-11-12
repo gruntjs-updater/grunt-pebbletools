@@ -64,7 +64,7 @@ exports.pebble = {
   },
 
   hasClientScripts: function(test) {
-    test.ok(grunt.file.read('frontend/src/lib/client/controls/ArrayTreeBase.js'), 'src/ArrayTreeBase.js');
+    test.ok(grunt.file.read('frontend/src/client/controls/ArrayTreeBase.js'), 'src/ArrayTreeBase.js');
     test.done();
   },
 

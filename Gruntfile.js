@@ -43,8 +43,7 @@ module.exports = function(grunt) {
       bundle: {
         outputFile : 'appstack_bundle.json',
         clientFiles: [
-          'frontend/scenarios/components/*.js', 'frontend/scenarios/controllers/*.js', 'frontend/scenarios/models/*.js', 'frontend/scenarios/routes/**/*.js',
-          'frontend/sessions/collections/*.js', 'frontend/sessions/models/*.js', 'frontend/sessions/router.js' 
+          'frontend/**/*.js'
         ],
         clientTestFiles: [ ],
         cssTemplates: null,

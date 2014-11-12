@@ -17,26 +17,21 @@ function json2xml(pebJson) {
 }
 
 function processOtherFiles(otherFiles, data) {
-  //otherFiles
-  console.log('\n----- otherFiles -----');
+  console.log('\n----- otherFiles (' + otherFiles.length + ')-----');
   //var otherFiles = otherFiles.getRecords('.');
   //for (var i = 0; i < otherFiles.length; i++) {
     //writeFile(otherFiles[i], 'contents', '.');
   //}
 }
 function processServices(services, data) {
-  //services
-  console.log('\n----- services -----');
-  var services = services.getRecords('.');
+  console.log('\n----- services (' + services.length + ')-----');
   for (var i = 0; i < services.length; i++) {
     var service = services[i];
     writeFile(service, '.', 'server/services', 'xml', true);
   }
 }
 function processTypes(types, data) {
-  //types
-  console.log('\n----- types -----');
-  var types = types.getRecords('.');
+  console.log('\n----- types (' + types.length + ')-----');
   for (var i = 0; i < types.length; i++) {
     var type = types[i];
     writeFile(type, '.', 'frontend/types', 'xml', true);
@@ -44,9 +39,7 @@ function processTypes(types, data) {
 }
 
 function processPebbleControls(tables, controls, data) {
-  //pebbleControls
-  console.log('\n----- pebble controls -----');
-  var controls = controls.getRecords('.');
+  console.log('\n----- pebbleControls (' + controls.length + ')-----');
   for (var i = 0; i < controls.length; i++) {
     var control = controls[i];
     var controlName = control.getTagName();
@@ -68,18 +61,14 @@ function processPebbleControls(tables, controls, data) {
 }
 
 function processOtherOtherFiles(otherFiles, data) {
-  //otherFiles
-  console.log('\n----- otherFiles -----');
-  var otherFiles = otherFiles.getRecords('.');
+  console.log('\n----- otherFiles (' + otherFiles.length + ')-----');
   for (var i = 0; i < otherFiles.length; i++) {
     var otherFile = otherFiles[i];
     grunt.file.write(otherFile.getValue('path'), otherFile.getValue('contents'), {encoding: 'utf8'});
   }
 }
 function processOtherControls(controls, data) {
-  //templates
-  console.log('\n----- templates -----');
-  var controls = controls.getRecords('.');
+  console.log('\n----- controls (' + controls.length + ')-----');
   for (var i = 0; i < controls.length; i++) {
     var control = controls[i];
     var template = control.getValue('template');
@@ -89,12 +78,8 @@ function processOtherControls(controls, data) {
   }
 }
 
-function processOtherAppInstance(appInstances, data) {
-
-  var theInstance = appInstances.get('theInstance');
-
-  console.log('\n----- clientFiles -----');
-  var clientScripts = theInstance.getRecords('clientScripts');
+function processOtherClientScripts(clientScripts, data) {
+  console.log('\n----- clientScripts (' + clientScripts.length + ')-----');
   if (clientScripts.length > 0) {
     for (var i = 0; i < clientScripts.length; i++) {
       var clientScript = clientScripts[i];
@@ -105,11 +90,11 @@ function processOtherAppInstance(appInstances, data) {
         grunt.file.write(clientScript.getValue('testCodePath'), clientScript.getValue('testCode'), {encoding: 'utf8'});
       }
     }
-    theInstance.remove('clientScripts');
   }
+}
 
-  console.log('\n----- serverFiles -----');
-  var serverScripts = theInstance.getRecords('serverScripts');
+function processOtherServerScripts(serverScripts, data) {
+  console.log('\n----- serverScripts (' + serverScripts.length + ')-----');
   if (serverScripts.length > 0) {
     for (var i = 0; i < serverScripts.length; i++) {
       var serverScript = serverScripts[i];
@@ -120,11 +105,11 @@ function processOtherAppInstance(appInstances, data) {
         grunt.file.write(serverScript.getValue('testCodePath'), serverScript.getValue('testCode'), {encoding: 'utf8'});
       }
     }
-    theInstance.remove('serverScripts');
   }
+}
 
-  console.log('\n----- cssTemplates -----');
-  var cssTemplates = theInstance.getRecords('cssTemplates');
+function processOtherCssTemplates(cssTemplates, data) {
+  console.log('\n----- cssTemplates (' + cssTemplates.length + ')-----');
   if (cssTemplates.length > 0) {
     for (var i = 0; i < cssTemplates.length; i++) {
       var cssTemplate = cssTemplates[i];
@@ -134,11 +119,11 @@ function processOtherAppInstance(appInstances, data) {
         //writeFile(less[j], '.', 'frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
       }
     }
-    theInstance.remove('cssTemplates');
   }
+}
 
-  console.log('\n----- stringMaps -----');
-  var stringMaps = theInstance.getRecords('stringMaps');
+function processOtherStringMaps(stringMaps, data) {
+  console.log('\n----- stringMaps (' + stringMaps.length + ')-----');
   if (stringMaps.length > 0) {
     for (var i = 0; i < stringMaps.length; i++) {
       var stringMap = stringMaps[i];
@@ -148,11 +133,11 @@ function processOtherAppInstance(appInstances, data) {
         //grunt.file.write('frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
       });
     }
-    theInstance.remove('stringMaps');
   }
+}
 
-  console.log('\n----- accessPoints -----');
-  var accessPoints = theInstance.getRecords('deployment.accessPoints');
+function processOtherAccessPoints(accessPoints, data) {
+  console.log('\n----- accessPoints (' + accessPoints.length + ')-----');
   if (accessPoints.length > 0) {
     for (var i = 0; i < accessPoints.length; i++) {
       var accessPoint = accessPoints[i];
@@ -166,8 +151,12 @@ function processOtherAppInstance(appInstances, data) {
         grunt.file.write(accessPoint.getValue('viewPath'), accessPoint.getValue('htmlpage'), {encoding: 'utf8'});
       }
     }
-    theInstance.remove('deployment.accessPoints');
   }
+}
+
+function processOtherAppInstance(appInstances, data) {
+
+  var theInstance = appInstances.get('theInstance');
 
   console.log('\n----- pebble.json -----');
   var mainConfig = theInstance.get('mainConfig');
@@ -177,34 +166,27 @@ function processOtherAppInstance(appInstances, data) {
   }
 }
 
-function processAppInstance(appInstances, data) {
-
-  var theInstance = appInstances.get('theInstance');
-
-  //clientFiles
-  console.log('\n----- clientFiles -----');
-  var clientScripts = theInstance.getRecords('clientScripts');
+function processClientScripts(clientScripts, data) {
+  console.log('\n----- clientScripts (' + clientScripts.length + ')-----');
   if (clientScripts.length > 0) {
     for (var i = 0; i < clientScripts.length; i++) {
       var clientScript = clientScripts[i];
+      console.log(clientScript.getTagName());
       var devCode = clientScript.get('devCode');
       if (devCode) {
-        //writeFile(clientScript, 'devCode', 'frontend/src', 'js');
         grunt.file.write(clientScript.getValue('codePath'), clientScript.getValue('devCode'), {encoding: 'utf8'});
       }
 
       var testCode = clientScript.get('testCode');
       if (testCode) {
-        //writeFile(testCode, '.', 'frontend/test', 'js');
         grunt.file.write(clientScript.getValue('testCodePath'), clientScript.getValue('testCode'), {encoding: 'utf8'});
       }
     }
-    theInstance.remove('clientScripts');
   }
+}
 
-  //serverFiles
-  console.log('\n----- serverFiles -----');
-  var serverScripts = theInstance.getRecords('serverScripts');
+function processServerScripts(serverScripts, data) {
+  console.log('\n----- serverScripts (' + serverScripts.length + ')-----');
   if (serverScripts.length > 0) {
     for (var i = 0; i < serverScripts.length; i++) {
       var serverScript = serverScripts[i];
@@ -215,12 +197,12 @@ function processAppInstance(appInstances, data) {
         writeFile(testCode, '.', 'server/test', 'js');
       }
     }
-    theInstance.remove('serverScripts');
   }
+}
 
+function processCssTemplates(cssTemplates, data) {
   //cssTemplates (take both css and less children)
-  console.log('\n----- cssTemplates -----');
-  var cssTemplates = theInstance.getRecords('cssTemplates');
+  console.log('\n----- cssTemplates (' + cssTemplates.length + ')-----');
   if (cssTemplates.length > 0) {
     for (var i = 0; i < cssTemplates.length; i++) {
       var cssTemplate = cssTemplates[i];
@@ -230,12 +212,11 @@ function processAppInstance(appInstances, data) {
         writeFile(less[j], '.', 'frontend/cssTemplates/' + cssTemplate.getTagName(), 'less');
       }
     }
-    theInstance.remove('cssTemplates');
   }
+}
 
-  //stringMaps
-  console.log('\n----- stringMaps -----');
-  var stringMaps = theInstance.getRecords('stringMaps');
+function processStringMaps(stringMaps, data) {
+  console.log('\n----- stringMaps (' + stringMaps.length + ')-----');
   if (stringMaps.length > 0) {
     for (var i = 0; i < stringMaps.length; i++) {
       var stringMap = stringMaps[i];
@@ -245,12 +226,11 @@ function processAppInstance(appInstances, data) {
         grunt.file.write('frontend/stringMaps/' + stringMap.getTagName() + '/' + string.getTagName() + '.txt', string.getValue('.'), {encoding: 'utf8'});
       });
     }
-    theInstance.remove('stringMaps');
   }
+}
 
-  //accessPoints
-  console.log('\n----- accessPoints -----');
-  var accessPoints = theInstance.getRecords('deployment.accessPoints');
+function processAccessPoints(accessPoints, data) {
+  console.log('\n----- accessPoints (' + accessPoints.length + ')-----');
   if (accessPoints.length > 0) {
     for (var i = 0; i < accessPoints.length; i++) {
       var accessPoint = accessPoints[i];
@@ -269,9 +249,13 @@ function processAppInstance(appInstances, data) {
         writeFile(accessPoint, '.', accessPointsPath, 'xml', true);
       }
     }
-    theInstance.remove('deployment.accessPoints');
   }
-  
+}
+
+function processAppInstance(appInstances, data) {
+
+  var theInstance = appInstances.get('theInstance');
+
   console.log('\n----- pebble.json -----');
   var mainConfig = theInstance.get('mainConfig');
   if (mainConfig) {
@@ -311,26 +295,47 @@ function extractPebbleProject(gruntRef, data) {
   tables.forEach(function(table) {
 
     var tableName = table.getTagName(); 
+    var recs = table.getRecords('.');
 
     switch (tableName) {
       case 'theModel_appInstances':
         processAppInstance(table, data);
       break;
 
+      case 'theModel_clientScripts':
+        processClientScripts(recs, data);
+      break;
+      
+      case 'theModel_serverScripts':
+        processServerScripts(recs, data);
+      break;
+      
+      case 'theModel_cssTemplates':
+        processCssTemplates(recs, data);
+      break;
+
+      case 'theModel_stringMaps':
+        processStringMaps(recs, data);
+      break;
+
+      case 'theModel_accessPoints':
+        processAccessPoints(recs, data);
+      break;
+
       case 'theModel_controls':
-        processPebbleControls(tables, table, data);
+        processPebbleControls(tables, recs, data);
       break;
 
       case 'theModel_types':
-        processTypes(table, data);
+        processTypes(recs, data);
       break;
 
       case 'theModel_services':
-        processServices(table, data);
+        processServices(recs, data);
       break;
 
       case 'theModel_otherFiles':
-        processOtherFiles(table, data);
+        processOtherFiles(recs, data);
       break;
 
       default:
@@ -355,18 +360,39 @@ function extractOtherProject(gruntRef, data) {
   tables.forEach(function(table) {
 
     var tableName = table.getTagName(); 
+    var recs = table.getRecords('.');
 
     switch (tableName) {
       case 'theModel_appInstances':
         processOtherAppInstance(table, data);
       break;
 
+      case 'theModel_clientScripts':
+        processOtherClientScripts(recs, data);
+      break;
+      
+      case 'theModel_serverScripts':
+        processOtherServerScripts(recs, data);
+      break;
+      
+      case 'theModel_cssTemplates':
+        processOtherCssTemplates(recs, data);
+      break;
+
+      case 'theModel_stringMaps':
+        processOtherStringMaps(recs, data);
+      break;
+
+      case 'theModel_accessPoints':
+        processOtherAccessPoints(recs, data);
+      break;
+
       case 'theModel_controls':
-        processOtherControls(table, data);
+        processOtherControls(recs, data);
       break;
 
       case 'theModel_otherFiles':
-        processOtherOtherFiles(table, data);
+        processOtherOtherFiles(recs, data);
       break;
 
       default:

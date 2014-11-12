@@ -59,7 +59,7 @@ exports.bundle_pebble_test = {
   hasAccessPoints: function(test) {
     test.expect(4);
 
-    var accessPointsPath = 'theModel_appInstances.theInstance.deployment.accessPoints';
+    var accessPointsPath = 'theModel_accessPoints';
     var files = fs.readdirSync('frontend/accessPoints');
     test.equal(outPeb.getRecords(accessPointsPath).length, files.length);
 
@@ -74,7 +74,7 @@ exports.bundle_pebble_test = {
     //TODO: union of code and tests, if not 1-1 then there will be more
   //hasClientScripts: function(test) {
 
-    //var tablePath = 'theModel_appInstances.theInstance.clientScripts';
+    //var tablePath = 'theModel_clientScripts';
     //var tmpControlsPath = 'frontend/src';
     //if (fs.existsSync(tmpControlsPath)) {
       //var files = grunt.file.expand(['frontend/src/lib/**/*.js']);
@@ -87,7 +87,7 @@ exports.bundle_pebble_test = {
   hasServerScripts: function(test) {
     test.expect(1);
 
-    var tablePath = 'theModel_appInstances.theInstance.serverScripts';
+    var tablePath = 'theModel_serverScripts';
     var tmpControlsPath = 'server/src';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of scripts');
@@ -98,7 +98,7 @@ exports.bundle_pebble_test = {
   hasCssTemplates: function(test) {
     test.expect(1);
 
-    var tablePath = 'theModel_appInstances.theInstance.cssTemplates';
+    var tablePath = 'theModel_cssTemplates';
     var tmpControlsPath = 'frontend/cssTemplates';
     var files = fs.readdirSync(tmpControlsPath);
     test.equal(outPeb.getRecords(tablePath).length, files.length, 'number of templates');
