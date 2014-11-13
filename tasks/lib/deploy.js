@@ -30,7 +30,7 @@ function deploy(grunt, data, accessPointParam) {
 
   } else {
     //all
-    var accessPoints = deployment.getRecords('accessPoints');
+    var accessPoints = app.getRecords('theModel_accessPoints');
     for (var i = 0; i < accessPoints.length; i++) {
 
       var accessPoint = accessPoints[i];
@@ -53,7 +53,7 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
   //build deployment
   var lib = workspaceDs.retrieve('theModel.libs', appName);
   
-  var accessPoint = deployment.get('accessPoints.' + accessPointParam);
+  var accessPoint = app.get('theModel_accessPoints.' + accessPointParam);
   var accessPointConfigStr = accessPoint.getValue('config');
   var accessPointConfig = JSON.parse(accessPointConfigStr);
   for (var i = 0; i < accessPointConfig.dependencies.length; i++) {
