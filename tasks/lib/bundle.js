@@ -203,10 +203,6 @@ function bundlePebbleProject(gruntRef, data) {
   }
   var lib = new pebble.Pebble(fileName.split('.')[0]);
 
-  console.log('\n----- theInstance -----');
-  var config = fs.readFileSync(p.join(basePath, 'theInstance.xml'), 'utf-8');
-  lib.set(instancePath, new pebble.Pebble(xml2json(config)));
-  
   if (!data.ignore || data.ignore.indexOf('clientScripts') === -1) { 
     console.log('\n----- clientFiles -----');
     compressGlob(['frontend/src/**/*.js'], lib, 'devCode', 'theModel_clientScripts', 'codePath');

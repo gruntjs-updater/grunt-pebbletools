@@ -263,8 +263,6 @@ function processAppInstance(appInstances, data) {
     theInstance.remove('mainConfig');
   }
 
-  //description, actorGroups, deployment.theControlApp
-  grunt.file.write('theInstance.xml', json2xml(theInstance.impl.xml), {encoding: 'utf8'});
 }
 
 function writeFile(peb, contentsPath, defaultPath, defaultExt, isPebbleControl) {

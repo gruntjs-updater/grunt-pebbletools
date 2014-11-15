@@ -22,11 +22,9 @@ function deploy(grunt, data, accessPointParam) {
   var appStr = fs.readFileSync(p.join(topDir, data.app), 'utf-8');
   var app = new pebble.Pebble(appStr);
   
-  var deployment = app.get('theModel_appInstances.theInstance.deployment');
-  
   if (accessPointParam) {
 
-      _deploy(grunt, data, app, deployment, accessPointParam);
+      _deploy(grunt, data, app, accessPointParam);
 
   } else {
     //all
@@ -34,13 +32,13 @@ function deploy(grunt, data, accessPointParam) {
     for (var i = 0; i < accessPoints.length; i++) {
 
       var accessPoint = accessPoints[i];
-      _deploy(grunt, data, app.getCopy('.'), deployment.getCopy('.'), accessPoint.getTagName());
+      _deploy(grunt, data, app.getCopy('.'), accessPoint.getTagName());
 
     }
   }
 }
 
-function _deploy(grunt, data, app, deployment, accessPointParam) {
+function _deploy(grunt, data, app, accessPointParam) {
 
   console.log('INFO: building deployment ...' + accessPointParam);
   //empty ws
@@ -69,7 +67,7 @@ function _deploy(grunt, data, app, deployment, accessPointParam) {
   pebble.less = less;
 
   var depObj = new pebble.shared.Deployment();
-  depObj.buildDeployment(new pebble.shared.BuildDeployment(less), workspaceDs, appName, deployment, accessPointParam, function(accessPointDeployment) {
+  depObj.buildDeployment(new pebble.shared.BuildDeployment(less), appName, workspaceDs, accessPointParam, function(accessPointDeployment) {
 
     grunt.file.write(p.join(topDir, data.output, accessPointParam + '.json'), accessPointDeployment.toString(), {encoding:'utf8'});
     if (data.outputTemplates) {
