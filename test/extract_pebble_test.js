@@ -29,7 +29,7 @@ exports.pebble = {
   hasInstance: function(test) {
     test.expect(1);
 
-    test.ok(grunt.file.read('theInstance.xml'), 'should have extracted theInstance');
+    test.ok(grunt.file.read('pebble.json'), 'should have pebble.json');
 
     test.done();
   },
