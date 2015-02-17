@@ -37,26 +37,6 @@ module.exports = function(grunt) {
         outputFile: 'standard_bundle.json',
         ignore: []
       },
-      extract:{
-        appPath: 'test/fixtures/appstack.json'
-      },
-      bundle: {
-        outputFile : 'appstack_bundle.json',
-        clientFiles: [
-          'frontend/**/*.js'
-        ],
-        clientTestFiles: [ ],
-        cssTemplates: null,
-        serverFiles: [ ],
-        serverTestFiles: [ ],
-        templateFiles: [
-          'frontend/scenarios/templates/**/*.hbs',
-          'frontend/sessions/templates/*.html'
-        ],
-        accessPoints: ['config/*.json'],
-        viewFiles: ['views/*.html'],
-        //otherFiles: ['app.js', 'bower.json', 'Gruntfile.js', 'package.json', 'README.md', 'grunt-tasks/**/*.js'] 
-      },
       buildStatic: {
         configsPath: 'config',
         viewsPath: 'views',
@@ -97,11 +77,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  grunt.registerTask('test', ['testPebbleExtract', 'testPebbleBundle', 'testOtherExtract', 'testOtherBundle']);
+  grunt.registerTask('test', ['testPebbleExtract', 'testPebbleBundle']);
   grunt.registerTask('testPebbleExtract', ['clean', 'pebbletools:extractPebble', 'nodeunit:testPebbleExtract']);
   grunt.registerTask('testPebbleBundle', ['pebbletools:bundlePebble', 'nodeunit:testPebbleBundle']);
-  grunt.registerTask('testOtherExtract', ['clean', 'pebbletools:extract', 'nodeunit:testOtherExtract']);
-  grunt.registerTask('testOtherBundle', ['pebbletools:bundle', 'nodeunit:testOtherBundle']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

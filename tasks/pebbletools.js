@@ -18,14 +18,8 @@ module.exports = function(grunt) {
     grunt.log.writeln('');
     switch (this.target) {
 
-				case 'bundle':
-					bundle.bundleOtherProject(grunt, this.data);
-					break;
 				case 'bundlePebble':
 					bundle.bundlePebbleProject(grunt, this.data);
-					break;
-				case 'extract':
-					extract.extractOtherProject(grunt, this.data);
 					break;
 				case 'extractPebble':
 					extract.extractPebbleProject(grunt, this.data);
