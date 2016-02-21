@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "pebble-object-xmldom": "*",
-		"pebble-object-json": "*",
-		"pebble-shared-node": "*",
+    "pebble-object-json": "*",
+    "pebble-shared-node": "*",
     "less": "*",
     "pretty-data": "*"
   },
@@ -41,7 +41,7 @@
     "grunt-cli": "~0.1.13"
   },
   "peerDependencies": {
-    "grunt": "~0.4.5"
+    "grunt": ">=0.4.0"
   },
   "keywords": [
     "gruntplugin"
